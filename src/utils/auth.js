@@ -1,3 +1,4 @@
+// 设置 cookie 里的token
 import Cookies from 'js-cookie'
 
 const TokenKey = 'Admin-Token'

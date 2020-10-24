@@ -2,10 +2,10 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/admin/articles',
+    url: 'api/admin/articles',
     method: 'get',
     params: query,
-    baseURL: 'api'
+    baseURL: 'http://localhost:8080'
   })
 }
 
