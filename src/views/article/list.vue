@@ -112,13 +112,12 @@
 
       <el-table-column
         label="标题"
-        width="400"
         prop="articleTitle"
       >
         <template slot-scope="{row}">
           <span
             class="link-type"
-            @click="handleUpdate(row)"
+            @click="handleOpen(row)"
           >{{ row.articleTitle }}</span>
         </template>
       </el-table-column>
@@ -202,6 +201,7 @@
           >
             禁用
           </el-button>
+
           <el-button
             v-if="row.articleStatus!='deleted'"
             size="mini"
@@ -230,11 +230,14 @@ import {
   fetchList,
   fetchPv,
   createArticle,
-  updateArticle
+  updateArticle,
+  deleteArticle
 } from '@/api/article'
+
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+// import article from "mock/article";
 
 const calendarTypeOptions = [
   { key: 'CN', display_name: 'China' },
@@ -377,12 +380,7 @@ export default {
       }
     },
     handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+      this.$router.push('/article/add')
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -403,8 +401,11 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      window.open('http://localhost:8080/article/' + row.articleId, '_blank').location
+      this.$router.push('/article/update/' + row.articleId)
+    },
+    handleOpen(row) {
+      window.open('http://localhost:8080/article/' + row.articleId, '_blank')
+        .location
     },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -426,13 +427,27 @@ export default {
       })
     },
     handleDelete(row, index) {
-      this.$notify({
-        title: 'Success',
-        message: 'Delete Successfully',
-        type: 'success',
-        duration: 2000
+      this.$confirm('此操作将永久删除此篇文章，是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
-      this.list.splice(index, 1)
+        .then(() => {
+          deleteArticle(row.articleId).then((resp) => {
+            console.log(resp)
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.list.splice(index, 1)
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已经取消删除'
+          })
+        })
     },
     handleFetchPv(pv) {
       fetchPv(pv).then((response) => {
