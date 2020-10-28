@@ -231,43 +231,44 @@ import {
   fetchPv,
   createArticle,
   updateArticle,
-  deleteArticle
-} from '@/api/article'
+  deleteArticle,
+  setArticleStatus,
+} from "@/api/article";
 
-import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import waves from "@/directive/waves"; // waves directive
+import { parseTime } from "@/utils";
+import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
 // import article from "mock/article";
 
 const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
+  { key: "CN", display_name: "China" },
+  { key: "US", display_name: "USA" },
+  { key: "JP", display_name: "Japan" },
+  { key: "EU", display_name: "Eurozone" },
+];
 
 // arr to obj, such as { CN : "China", US : "USA" }
 const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
+  acc[cur.key] = cur.display_name;
+  return acc;
+}, {});
 
 export default {
-  name: 'ComplexTable',
+  name: "ComplexTable",
   components: { Pagination },
   directives: { waves },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
+        published: "success",
+        draft: "info",
+        deleted: "danger",
+      };
+      return statusMap[status];
     },
     typeFilter(type) {
-      return calendarTypeKeyValue[type]
-    }
+      return calendarTypeKeyValue[type];
+    },
   },
   data() {
     return {
@@ -280,216 +281,219 @@ export default {
         limit: 10,
         title: undefined,
         type: undefined,
-        sort: '+id'
+        sort: "+id",
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
       sortOptions: [
-        { label: 'ID Ascending', key: '+id' },
-        { label: 'ID Descending', key: '-id' }
+        { label: "ID Ascending", key: "+id" },
+        { label: "ID Descending", key: "-id" },
       ],
-      statusOptions: ['published', 'draft', 'deleted'],
+      statusOptions: ["published", "draft", "deleted"],
       showReviewer: false,
       temp: {
         id: undefined,
         importance: 1,
-        remark: '',
+        remark: "",
         timestamp: new Date(),
-        title: '',
-        type: '',
-        status: 'published'
+        title: "",
+        type: "",
+        status: "published",
       },
       dialogFormVisible: false,
-      dialogStatus: '',
+      dialogStatus: "",
       textMap: {
-        update: 'Edit',
-        create: 'Create'
+        update: "Edit",
+        create: "Create",
       },
       dialogPvVisible: false,
       pvData: [],
       rules: {
         type: [
-          { required: true, message: 'type is required', trigger: 'change' }
+          { required: true, message: "type is required", trigger: "change" },
         ],
         timestamp: [
           {
-            type: 'date',
+            type: "date",
             required: true,
-            message: 'timestamp is required',
-            trigger: 'change'
-          }
+            message: "timestamp is required",
+            trigger: "change",
+          },
         ],
         title: [
-          { required: true, message: 'title is required', trigger: 'blur' }
-        ]
+          { required: true, message: "title is required", trigger: "blur" },
+        ],
       },
-      downloadLoading: false
-    }
+      downloadLoading: false,
+    };
   },
   created() {
-    this.getList()
+    this.getList();
   },
   methods: {
     getList() {
-      this.listLoading = true
+      this.listLoading = true;
       fetchList(this.listQuery).then((response) => {
-        console.log(response)
-        this.list = response.data.records
-        this.total = response.data.total
+        console.log(response);
+        this.list = response.data.records;
+        this.total = response.data.total;
 
         // Just to simulate the time of the request
         setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
+          this.listLoading = false;
+        }, 1.5 * 1000);
+      });
     },
     handleFilter() {
-      this.listQuery.page = 1
-      this.getList()
+      this.listQuery.page = 1;
+      this.getList();
     },
     handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作Success',
-        type: 'success'
-      })
-      row.articleStatus = status
+      setArticleStatus(row.articleId, status).then((resp) => {
+        console.log(resp);
+        this.$message({
+          message: "操作Success",
+          type: "success",
+        });
+        row.articleStatus = status;
+      });
     },
     sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
+      const { prop, order } = data;
+      if (prop === "id") {
+        this.sortByID(order);
       }
     },
     sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
+      if (order === "ascending") {
+        this.listQuery.sort = "+id";
       } else {
-        this.listQuery.sort = '-id'
+        this.listQuery.sort = "-id";
       }
-      this.handleFilter()
+      this.handleFilter();
     },
     resetTemp() {
       this.temp = {
         id: undefined,
         importance: 1,
-        remark: '',
+        remark: "",
         timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
-      }
+        title: "",
+        status: "published",
+        type: "",
+      };
     },
     handleCreate() {
-      this.$router.push('/article/add')
+      this.$router.push("/article/add");
     },
     createData() {
-      this.$refs['dataForm'].validate((valid) => {
+      this.$refs["dataForm"].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
+          this.temp.id = parseInt(Math.random() * 100) + 1024; // mock a id
+          this.temp.author = "vue-element-admin";
           createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
+            this.list.unshift(this.temp);
+            this.dialogFormVisible = false;
             this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
-              type: 'success',
-              duration: 2000
-            })
-          })
+              title: "Success",
+              message: "Created Successfully",
+              type: "success",
+              duration: 2000,
+            });
+          });
         }
-      })
+      });
     },
     handleUpdate(row) {
-      this.$router.push('/article/update/' + row.articleId)
+      this.$router.push("/article/update/" + row.articleId);
     },
     handleOpen(row) {
-      window.open('http://localhost:8080/article/' + row.articleId, '_blank')
-        .location
+      window.open("http://localhost:8080/article/" + row.articleId, "_blank")
+        .location;
     },
     updateData() {
-      this.$refs['dataForm'].validate((valid) => {
+      this.$refs["dataForm"].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          const tempData = Object.assign({}, this.temp);
+          tempData.timestamp = +new Date(tempData.timestamp); // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           updateArticle(tempData).then(() => {
-            const index = this.list.findIndex((v) => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
-            this.dialogFormVisible = false
+            const index = this.list.findIndex((v) => v.id === this.temp.id);
+            this.list.splice(index, 1, this.temp);
+            this.dialogFormVisible = false;
             this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
-              type: 'success',
-              duration: 2000
-            })
-          })
+              title: "Success",
+              message: "Update Successfully",
+              type: "success",
+              duration: 2000,
+            });
+          });
         }
-      })
+      });
     },
     handleDelete(row, index) {
-      this.$confirm('此操作将永久删除此篇文章，是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      this.$confirm("此操作将永久删除此篇文章，是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
       })
         .then(() => {
           deleteArticle(row.articleId).then((resp) => {
-            console.log(resp)
+            console.log(resp);
             this.$message({
-              type: 'success',
-              message: '删除成功!'
-            })
-            this.list.splice(index, 1)
-          })
+              type: "success",
+              message: "删除成功!",
+            });
+            this.list.splice(index, 1);
+          });
         })
         .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已经取消删除'
-          })
-        })
+            type: "info",
+            message: "已经取消删除",
+          });
+        });
     },
     handleFetchPv(pv) {
       fetchPv(pv).then((response) => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
+        this.pvData = response.data.pvData;
+        this.dialogPvVisible = true;
+      });
     },
     handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then((excel) => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
+      this.downloadLoading = true;
+      import("@/vendor/Export2Excel").then((excel) => {
+        const tHeader = ["timestamp", "title", "type", "importance", "status"];
         const filterVal = [
-          'timestamp',
-          'title',
-          'type',
-          'importance',
-          'status'
-        ]
-        const data = this.formatJson(filterVal)
+          "timestamp",
+          "title",
+          "type",
+          "importance",
+          "status",
+        ];
+        const data = this.formatJson(filterVal);
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
+          filename: "table-list",
+        });
+        this.downloadLoading = false;
+      });
     },
     formatJson(filterVal) {
       return this.list.map((v) =>
         filterVal.map((j) => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
+          if (j === "timestamp") {
+            return parseTime(v[j]);
           } else {
-            return v[j]
+            return v[j];
           }
         })
-      )
+      );
     },
-    getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
-    }
-  }
-}
+    getSortClass: function (key) {
+      const sort = this.listQuery.sort;
+      return sort === `+${key}` ? "ascending" : "descending";
+    },
+  },
+};
 </script>
