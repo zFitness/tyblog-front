@@ -11,9 +11,28 @@ export function fetchList(query) {
 
 export function fetchArticle(id) {
   return request({
-    url: '/vue-element-admin/article/detail',
+    url: `api/admin/articles/${id}`,
     method: 'get',
-    params: { id }
+    params: {},
+    baseURL: 'http://localhost:8080'
+  })
+}
+
+export function deleteArticle(id) {
+  return request({
+    url: `api/admin/articles/delete`,
+    method: 'post',
+    params: { id },
+    baseURL: 'http://localhost:8080'
+  })
+}
+
+export function setArticleStatus(articleId, articleStatus) {
+  return request({
+    url: `api/admin/articles/setStatus`,
+    method: 'post',
+    params: { articleStatus, articleId },
+    baseURL: 'http://localhost:8080'
   })
 }
 
@@ -27,16 +46,18 @@ export function fetchPv(pv) {
 
 export function createArticle(data) {
   return request({
-    url: '/vue-element-admin/article/create',
+    url: 'api/admin/articles/add',
     method: 'post',
-    data
+    data,
+    baseURL: 'http://localhost:8080'
   })
 }
 
 export function updateArticle(data) {
   return request({
-    url: '/vue-element-admin/article/update',
+    url: 'api/admin/articles/update',
     method: 'post',
-    data
+    data,
+    baseURL: 'http://localhost:8080'
   })
 }

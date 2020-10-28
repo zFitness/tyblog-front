@@ -63,46 +63,46 @@
 </template>
 
 <script>
-import { createArticle } from "../../api/article";
+import { fetchArticle, updateArticle } from '../../api/article'
 
 export default {
-  name: "ArticleModify",
+  name: 'ArticleModify',
   components: {},
   data() {
     return {
       pickerOptions: {
         shortcuts: [
           {
-            text: "今天",
+            text: '今天',
             onClick(picker) {
-              picker.$emit("pick", new Date());
-            },
+              picker.$emit('pick', new Date())
+            }
           },
           {
-            text: "昨天",
+            text: '昨天',
             onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24);
-              picker.$emit("pick", date);
-            },
+              const date = new Date()
+              date.setTime(date.getTime() - 3600 * 1000 * 24)
+              picker.$emit('pick', date)
+            }
           },
           {
-            text: "一周前",
+            text: '一周前',
             onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", date);
-            },
-          },
-        ],
+              const date = new Date()
+              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', date)
+            }
+          }
+        ]
       },
       dialogFormVisible: false,
       article: {
-        articleTitle: "",
+        articleTitle: '',
         articleDate: new Date(),
-        articleSummary: "",
-        articleStatus: "draft",
-        articleContent: "",
+        articleSummary: '',
+        articleStatus: 'draft',
+        articleContent: ''
       },
       windowWidth: document.documentElement.clientWidth,
       isMobile: false,
@@ -112,65 +112,65 @@ export default {
         /* 1.3.5 */
         undo: true, // 上一步
         redo: true, // 下一步
-        preview: true, // 预览
-      },
-    };
+        preview: true // 预览
+      }
+    }
   },
   computed: {
-    language() {},
+    language() {}
   },
   watch: {
     windowWidth(val) {
-      console.log(val);
-      this.isMobile = this.windowWidth < 768;
-    },
+      console.log(val)
+      this.isMobile = this.windowWidth < 768
+    }
   },
   mounted() {
-    var that = this;
+    var that = this
+    this.getArticle()
     window.onresize = () => {
       return (() => {
-        window.fullWidth = document.documentElement.clientWidth;
-        that.windowWidth = window.fullWidth;
-      })();
-    };
+        window.fullWidth = document.documentElement.clientWidth
+        that.windowWidth = window.fullWidth
+      })()
+    }
   },
   methods: {
     handlerCreateArticle() {
-      if (this.article.articleTitle == "") {
+      if (this.article.articleTitle == '') {
         this.$notify({
-          title: "提示",
-          message: "标题不能为空",
-        });
-      } else if (this.article.articleContent == "") {
+          title: '提示',
+          message: '标题不能为空'
+        })
+      } else if (this.article.articleContent == '') {
         this.$notify({
-          title: "提示",
-          message: "内容不能为空",
-        });
+          title: '提示',
+          message: '内容不能为空'
+        })
       } else {
-        createArticle(this.article).then((resp) => {
-          console.log(resp);
+        updateArticle(this.article).then((resp) => {
+          console.log(resp)
           if (resp.code == 20000) {
             this.$notify({
-              title: "提示",
-              message: "发布成功",
-            });
-            // this.$router.push("/article/list")
-            setTimeout(() => {
-              this.$router.push("/article/list");
-            }, 150);
+              title: '提示',
+              message: '更新成功'
+            })
+            // setTimeout(() => {
+            //   // this.$router.push("/article/list");
+            // }, 150);
           }
-        });
+        })
       }
     },
     getArticle() {
-      console.log(this.$route.params.id);
+      console.log(this.$route.params.id)
       fetchArticle(this.$route.params.id).then((resp) => {
-        console.log(resp);
-        this.article = resp.data;
-      });
-    },
-  },
-};
+        console.log(resp)
+        this.article = resp.data
+      })
+    }
+  }
+}
 </script>
 
 <style scoped>

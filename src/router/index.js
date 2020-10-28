@@ -59,18 +59,6 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/documentation',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: 'Documentation',
-        meta: { title: 'Documentation', icon: 'documentation', affix: true }
-      }
-    ]
-  },
-  {
     path: '/article',
     component: Layout,
     redirect: '/article/list',
@@ -92,11 +80,20 @@ export const constantRoutes = [
       },
       {
         path: 'add',
-        component: () => import('@/views/permission/directive'),
+        component: () => import('@/views/article/add'),
         name: 'ArticleAdd',
         meta: {
           title: '新增文章'
         }
+      },
+      {
+        path: 'update/:id',
+        component: () => import('@/views/article/update'),
+        name: 'ArticleUpdate',
+        meta: {
+          title: '修改文章'
+        },
+        hidden: true
       }
     ]
   },
