@@ -39,6 +39,22 @@
             :picker-options="pickerOptions"
           />
         </el-form-item>
+        <el-form-item>
+          <span>分类</span>
+          <el-tree
+            :props="props"
+            :load="loadNode"
+            lazy
+            show-checkbox
+            @check-change="handleCheckChange"
+          >
+
+          </el-tree>
+          <el-button>增加</el-button>
+        </el-form-item>
+        <el-form-item label="标签">
+          <tag-select v-model="selectedLabel"></tag-select>
+        </el-form-item>
         <el-form-item label="摘要">
           <el-input
             v-model="article.articleSummary"
@@ -63,13 +79,24 @@
 </template>
 
 <script>
-import { createArticle } from "../../api/article";
+import { createArticle } from "@/api/article";
+import { fetchSorts } from "@/api/sort";
+import TagSelect from "./components/TagSelect";
 
 export default {
   name: "ArticleModify",
-  components: {},
+  components: {
+    TagSelect
+  },
   data() {
     return {
+      props: {
+        label: "name",
+        children: "zones",
+      },
+      selectedLabel: [],
+      count: 1,
+      newSort: [],
       pickerOptions: {
         shortcuts: [
           {
@@ -103,6 +130,9 @@ export default {
         articleSummary: "",
         articleStatus: "draft",
         articleContent: "",
+        sort: {
+          sortId: null,
+        },
       },
       windowWidth: document.documentElement.clientWidth,
       isMobile: false,
@@ -114,6 +144,8 @@ export default {
         redo: true, // 下一步
         preview: true, // 预览
       },
+      sorts: [],
+      labels: [],
     };
   },
   computed: {
@@ -126,6 +158,7 @@ export default {
     },
   },
   mounted() {
+    this.getSorts();
     var that = this;
     window.onresize = () => {
       return (() => {
@@ -135,6 +168,52 @@ export default {
     };
   },
   methods: {
+    handleCheckChange(data, checked, indeterminate) {
+      console.log(data, checked, indeterminate);
+    },
+    handleNodeClick(data) {
+      console.log(data);
+    },
+    loadNode(node, resolve) {
+      if (node.level === 0) {
+        return resolve([{ name: "region1" }, { name: "region2" }]);
+      }
+      if (node.level > 3) return resolve([]);
+
+      var hasChild;
+      if (node.data.name === "region1") {
+        hasChild = true;
+      } else if (node.data.name === "region2") {
+        hasChild = false;
+      } else {
+        hasChild = Math.random() > 0.5;
+      }
+
+      setTimeout(() => {
+        var data;
+        if (hasChild) {
+          data = [
+            {
+              name: "zone" + this.count++,
+            },
+            {
+              name: "zone" + this.count++,
+            },
+          ];
+        } else {
+          data = [];
+        }
+
+        resolve(data);
+      }, 500);
+    },
+    getSorts() {
+      fetchSorts().then((resp) => {
+        console.log(resp);
+        this.sorts = resp.data;
+      });
+    },
+
     handlerCreateArticle() {
       if (this.article.articleTitle == "") {
         this.$notify({
