@@ -4,8 +4,7 @@ export function fetchList(query) {
   return request({
     url: 'api/admin/articles',
     method: 'get',
-    params: query,
-    baseURL: 'http://localhost:8080'
+    params: query
   })
 }
 
@@ -13,8 +12,7 @@ export function fetchArticle(id) {
   return request({
     url: `api/admin/articles/${id}`,
     method: 'get',
-    params: {},
-    baseURL: 'http://localhost:8080'
+    params: {}
   })
 }
 
@@ -22,8 +20,7 @@ export function deleteArticle(id) {
   return request({
     url: `api/admin/articles/delete`,
     method: 'post',
-    params: { id },
-    baseURL: 'http://localhost:8080'
+    params: { id }
   })
 }
 
@@ -31,8 +28,7 @@ export function setArticleStatus(articleId, articleStatus) {
   return request({
     url: `api/admin/articles/setStatus`,
     method: 'post',
-    params: { articleStatus, articleId },
-    baseURL: 'http://localhost:8080'
+    params: { articleStatus, articleId }
   })
 }
 
@@ -48,8 +44,7 @@ export function createArticle(data) {
   return request({
     url: 'api/admin/articles/add',
     method: 'post',
-    data,
-    baseURL: 'http://localhost:8080'
+    data
   })
 }
 
@@ -57,7 +52,6 @@ export function updateArticle(data) {
   return request({
     url: 'api/admin/articles/update',
     method: 'post',
-    data,
-    baseURL: 'http://localhost:8080'
+    data
   })
 }

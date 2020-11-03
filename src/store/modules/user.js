@@ -35,9 +35,10 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
-        commit('SET_TOKEN', data.token)
+        console.log(response)
+        commit('SET_TOKEN', data)
         //设置token存储到 cookie 里面
-        setToken(data.token)
+        setToken(data)
         resolve()
       }).catch(error => {
         reject(error)
