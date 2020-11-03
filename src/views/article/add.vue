@@ -40,17 +40,7 @@
           />
         </el-form-item>
         <el-form-item>
-          <span>分类</span>
-          <el-tree
-            :props="props"
-            :load="loadNode"
-            lazy
-            show-checkbox
-            @check-change="handleCheckChange"
-          >
-
-          </el-tree>
-          <el-button>增加</el-button>
+         <sort-select-tree></sort-select-tree>
         </el-form-item>
         <el-form-item label="标签">
           <tag-select v-model="selectedLabel"></tag-select>
@@ -82,18 +72,16 @@
 import { createArticle } from "@/api/article";
 import { fetchSorts } from "@/api/sort";
 import TagSelect from "./components/TagSelect";
+import SortSelectTree from "./components/SortSelectTree";
 
 export default {
   name: "ArticleModify",
   components: {
-    TagSelect
+    TagSelect,
+    SortSelectTree
   },
   data() {
     return {
-      props: {
-        label: "name",
-        children: "zones",
-      },
       selectedLabel: [],
       count: 1,
       newSort: [],
@@ -133,6 +121,7 @@ export default {
         sort: {
           sortId: null,
         },
+        labels: [],
       },
       windowWidth: document.documentElement.clientWidth,
       isMobile: false,
@@ -168,45 +157,6 @@ export default {
     };
   },
   methods: {
-    handleCheckChange(data, checked, indeterminate) {
-      console.log(data, checked, indeterminate);
-    },
-    handleNodeClick(data) {
-      console.log(data);
-    },
-    loadNode(node, resolve) {
-      if (node.level === 0) {
-        return resolve([{ name: "region1" }, { name: "region2" }]);
-      }
-      if (node.level > 3) return resolve([]);
-
-      var hasChild;
-      if (node.data.name === "region1") {
-        hasChild = true;
-      } else if (node.data.name === "region2") {
-        hasChild = false;
-      } else {
-        hasChild = Math.random() > 0.5;
-      }
-
-      setTimeout(() => {
-        var data;
-        if (hasChild) {
-          data = [
-            {
-              name: "zone" + this.count++,
-            },
-            {
-              name: "zone" + this.count++,
-            },
-          ];
-        } else {
-          data = [];
-        }
-
-        resolve(data);
-      }, 500);
-    },
     getSorts() {
       fetchSorts().then((resp) => {
         console.log(resp);
@@ -226,6 +176,11 @@ export default {
           message: "内容不能为空",
         });
       } else {
+        this.selectedLabel.forEach((labelId) => {
+          this.article.labels.push({
+            labelId: labelId,
+          });
+        });
         createArticle(this.article).then((resp) => {
           console.log(resp);
           if (resp.code == 20000) {
