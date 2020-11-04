@@ -62,8 +62,8 @@ export const constantRoutes = [
     alwaysShow: true, // will always show the root menu
     name: "Article",
     meta: {
-      title: "文章管理",
-      icon: "el-icon-s-management"
+      title: "文章",
+      icon: "edit"
       // roles: ["admin", "editor"] // you can set roles in root nav
     },
     children: [
@@ -72,7 +72,7 @@ export const constantRoutes = [
         component: () => import("@/views/article/list"),
         name: "List",
         meta: {
-          title: "文章列表"
+          title: "所有文章"
         }
       },
       {
@@ -80,7 +80,23 @@ export const constantRoutes = [
         component: () => import("@/views/article/add"),
         name: "ArticleAdd",
         meta: {
-          title: "新增文章"
+          title: "写文章"
+        }
+      },
+      {
+        path: "sort",
+        component: () => import("@/views/article/add"),
+        name: "Sort",
+        meta: {
+          title: "分类目录"
+        }
+      },
+      {
+        path: "label",
+        component: () => import("@/views/article/add"),
+        name: "Label",
+        meta: {
+          title: "标签"
         }
       },
       {
@@ -95,41 +111,105 @@ export const constantRoutes = [
     ]
   },
   {
-    path: "/blog",
+    path: "/sheets",
     component: Layout,
-    redirect: "/article/list",
+    redirect: "/sheets/list",
     alwaysShow: true, // will always show the root menu
-    name: "Article",
+    name: "Sheets",
     meta: {
-      title: "博客管理",
-      icon: "el-icon-setting"
+      title: "页面",
+      icon: "el-icon-s-management"
       // roles: ["admin", "editor"] // you can set roles in root nav
     },
     children: [
       {
         path: "list",
         component: () => import("@/views/article/list"),
-        name: "List",
+        name: "SheetList",
         meta: {
-          title: "文章列表"
+          title: "所有页面"
         }
       },
       {
         path: "add",
         component: () => import("@/views/article/add"),
-        name: "ArticleAdd",
+        name: "SheetAdd",
         meta: {
-          title: "新增文章"
+          title: "添加页面"
+        }
+      }
+    ]
+  },
+  {
+    path: "/comments",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        component: () => import("@/views/article/list"),
+        name: "CommentList",
+        meta: { title: "评论", icon: "el-icon-s-comment" }
+      }
+    ]
+  },
+  {
+    path: "/user",
+    component: Layout,
+    redirect: "/user/profile",
+    alwaysShow: true, // will always show the root menu
+    name: "User",
+    meta: {
+      title: "用户",
+      icon: "el-icon-user"
+      // roles: ["admin", "editor"] // you can set roles in root nav
+    },
+    children: [
+      {
+        path: "profile",
+        component: () => import("@/views/profile/index"),
+        name: "Profile",
+        meta: {
+          title: "个人资料",
+          noCache: true
+        }
+      }
+    ]
+  },
+  {
+    path: "/system",
+    component: Layout,
+    redirect: "/system/options",
+    alwaysShow: true, // will always show the root menu
+    name: "System",
+    meta: {
+      title: "系统",
+      icon: "el-icon-setting"
+      // roles: ["admin", "editor"] // you can set roles in root nav
+    },
+    children: [
+      {
+        path: "options",
+        component: () => import("@/views/article/list"),
+        name: "Options",
+        meta: {
+          title: "博客设置"
         }
       },
       {
-        path: "update/:id",
-        component: () => import("@/views/article/update"),
-        name: "ArticleUpdate",
+        path: "tools",
+        component: () => import("@/views/article/list"),
+        name: "Tools",
         meta: {
-          title: "修改文章"
-        },
-        hidden: true
+          title: "小工具"
+        }
+      },
+      {
+        path: "about",
+        component: () => import("@/views/article/list"),
+        name: "About",
+        meta: {
+          title: "关于"
+        }
       }
     ]
   },
@@ -142,20 +222,6 @@ export const constantRoutes = [
         component: () => import("@/views/icons/index"),
         name: "Icons",
         meta: { title: "图标库", icon: "icon", noCache: true }
-      }
-    ]
-  },
-  {
-    path: "/profile",
-    component: Layout,
-    redirect: "/profile/index",
-    hidden: true,
-    children: [
-      {
-        path: "index",
-        component: () => import("@/views/profile/index"),
-        name: "Profile",
-        meta: { title: "Profile", icon: "user", noCache: true }
       }
     ]
   }
