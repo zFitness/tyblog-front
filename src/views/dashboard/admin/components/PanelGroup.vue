@@ -1,54 +1,153 @@
 <template>
-  <el-row :gutter="40" class="panel-group">
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
-        <div class="card-panel-icon-wrapper icon-people">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
-        </div>
+  <el-row
+    :gutter="10"
+    class="panel-group"
+  >
+    <el-col
+      :xs="12"
+      :sm="12"
+      :lg="6"
+      class="card-panel-col"
+    >
+      <div
+        class="card-panel"
+        @click="handleSetLineChartData('newVisitis')"
+      >
         <div class="card-panel-description">
           <div class="card-panel-text">
-            New Visits
+            文章
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <count-to
+            :start-val="0"
+            :end-val="102400"
+            :duration="2600"
+            class="card-panel-num"
+          />
+        </div>
+        <el-tooltip
+          content="添加文章"
+          effect="dark"
+          placement="bottom"
+        >
+          <div
+            class="card-panel-icon-wrapper"
+            @click="articleAdd"
+          >
+            <svg-icon
+              icon-class="add"
+              class-name="card-panel-icon"
+            />
+          </div>
+        </el-tooltip>
+
+      </div>
+    </el-col>
+    <el-col
+      :xs="12"
+      :sm="12"
+      :lg="6"
+      class="card-panel-col"
+    >
+      <div
+        class="card-panel"
+        @click="handleSetLineChartData('messages')"
+      >
+        <el-tooltip
+          content="评论管理"
+          effect="dark"
+          placement="bottom"
+        >
+          <div
+            class="card-panel-icon-wrapper"
+            @click="openComment"
+          >
+            <svg-icon
+              icon-class="list"
+              class-name="card-panel-icon"
+            />
+          </div>
+        </el-tooltip>
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            评论
+          </div>
+          <count-to
+            :start-val="0"
+            :end-val="81212"
+            :duration="3000"
+            class="card-panel-num"
+          />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('messages')">
-        <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="message" class-name="card-panel-icon" />
-        </div>
+    <el-col
+      :xs="12"
+      :sm="12"
+      :lg="6"
+      class="card-panel-col"
+    >
+      <div
+        class="card-panel"
+        @click="handleSetLineChartData('purchases')"
+      >
+        <el-tooltip
+          content="文章总阅读量"
+          effect="dark"
+          placement="bottom"
+        >
+          <div class="card-panel-icon-wrapper">
+            <svg-icon
+              icon-class="help"
+              class-name="card-panel-icon"
+            />
+          </div>
+        </el-tooltip>
+        <!-- <read-view-icon></read-view-icon> -->
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Messages
+            阅读量
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to
+            :start-val="0"
+            :end-val="9280"
+            :duration="3200"
+            class="card-panel-num"
+          />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
-        <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="money" class-name="card-panel-icon" />
-        </div>
+    <el-col
+      :xs="12"
+      :sm="12"
+      :lg="6"
+      class="card-panel-col"
+    >
+      <div
+        class="card-panel"
+        @click="handleSetLineChartData('shoppings')"
+      >
+        <el-tooltip
+          content="博客建立于2020-03-01"
+          effect="dark"
+          placement="bottom"
+        >
+          <div class="card-panel-icon-wrapper">
+            <svg-icon
+              icon-class="help"
+              class-name="card-panel-icon"
+            />
+          </div>
+        </el-tooltip>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Purchases
+            运行天数
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shoppings')">
-        <div class="card-panel-icon-wrapper icon-shopping">
-          <svg-icon icon-class="shopping" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Shoppings
-          </div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
+          <count-to
+            :start-val="0"
+            :end-val="13600"
+            :duration="3600"
+            class="card-panel-num"
+          />
         </div>
       </div>
     </el-col>
@@ -56,18 +155,27 @@
 </template>
 
 <script>
-import CountTo from 'vue-count-to'
-
+import CountTo from "vue-count-to";
+import AddArticleIcon from "@/components/AddArticleIcon";
+import ReadViewIcon from "@/components/ReadViewIcon";
 export default {
   components: {
-    CountTo
+    CountTo,
+    AddArticleIcon,
+    ReadViewIcon,
   },
   methods: {
     handleSetLineChartData(type) {
-      this.$emit('handleSetLineChartData', type)
-    }
-  }
-}
+      this.$emit("handleSetLineChartData", type);
+    },
+    articleAdd() {
+      this.$router.push("/article/add");
+    },
+    openComment() {
+      this.$router.push("/comments");
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -86,70 +194,24 @@ export default {
     overflow: hidden;
     color: #666;
     background: #fff;
-    box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
-    border-color: rgba(0, 0, 0, .05);
-
-    &:hover {
-      .card-panel-icon-wrapper {
-        color: #fff;
-      }
-
-      .icon-people {
-        background: #40c9c6;
-      }
-
-      .icon-message {
-        background: #36a3f7;
-      }
-
-      .icon-money {
-        background: #f4516c;
-      }
-
-      .icon-shopping {
-        background: #34bfa3
-      }
-    }
-
-    .icon-people {
-      color: #40c9c6;
-    }
-
-    .icon-message {
-      color: #36a3f7;
-    }
-
-    .icon-money {
-      color: #f4516c;
-    }
-
-    .icon-shopping {
-      color: #34bfa3
-    }
+    box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.05);
 
     .card-panel-icon-wrapper {
-      float: left;
-      margin: 14px 0 0 14px;
-      padding: 16px;
+      float: right;
+      margin: 14px 14px 0 0;
+      color: #40c9c6;
+      font-size: 20px;
       transition: all 0.38s ease-out;
-      border-radius: 6px;
-    }
-
-    .card-panel-icon {
-      float: left;
-      font-size: 48px;
     }
 
     .card-panel-description {
-      float: right;
-      font-weight: bold;
-      margin: 26px;
-      margin-left: 0px;
+      float: left;
+      margin: 15px 0 0 15px;
 
       .card-panel-text {
-        line-height: 18px;
         color: rgba(0, 0, 0, 0.45);
-        font-size: 16px;
+        font-size: 14px;
         margin-bottom: 12px;
       }
 
@@ -160,22 +222,9 @@ export default {
   }
 }
 
-@media (max-width:550px) {
-  .card-panel-description {
-    display: none;
-  }
-
-  .card-panel-icon-wrapper {
-    float: none !important;
-    width: 100%;
-    height: 100%;
-    margin: 0 !important;
-
-    .svg-icon {
-      display: block;
-      margin: 14px auto !important;
-      float: none !important;
-    }
-  }
+@media (max-width: 550px) {
+  // .card-panel-description {
+  //   display: none;
+  // }
 }
 </style>
