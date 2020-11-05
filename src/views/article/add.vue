@@ -37,10 +37,12 @@
             placeholder="选择日期时间"
             align="right"
             :picker-options="pickerOptions"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            :default-value="new Date()"
           />
         </el-form-item>
         <el-form-item>
-         <sort-select-tree></sort-select-tree>
+          <sort-select-tree></sort-select-tree>
         </el-form-item>
         <el-form-item label="标签">
           <tag-select v-model="selectedLabel"></tag-select>
@@ -78,7 +80,7 @@ export default {
   name: "ArticleModify",
   components: {
     TagSelect,
-    SortSelectTree
+    SortSelectTree,
   },
   data() {
     return {
@@ -114,7 +116,7 @@ export default {
       dialogFormVisible: false,
       article: {
         articleTitle: "",
-        articleDate: new Date(),
+        articleDate: "",
         articleSummary: "",
         articleStatus: "draft",
         articleContent: "",
