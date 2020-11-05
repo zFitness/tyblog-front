@@ -3,8 +3,6 @@
     <mavon-editor
       v-model="article.articleContent"
       :ishljs="true"
-      :toolbars="isMobile?toolbarsMov:undefined"
-      :subfield="!isMobile"
     />
     <el-button
       type="primary"
@@ -41,8 +39,19 @@
             :default-value="new Date()"
           />
         </el-form-item>
-        <el-form-item>
-          <sort-select-tree></sort-select-tree>
+        <el-form-item label="分类">
+          <el-select
+            v-model="article.sort.sortId"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="(item,key) in sorts"
+              :key="key"
+              :label="item.sortName"
+              :value="item.sortId"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="标签">
           <tag-select v-model="selectedLabel"></tag-select>
@@ -85,8 +94,6 @@ export default {
   data() {
     return {
       selectedLabel: [],
-      count: 1,
-      newSort: [],
       pickerOptions: {
         shortcuts: [
           {
@@ -125,38 +132,11 @@ export default {
         },
         labels: [],
       },
-      windowWidth: document.documentElement.clientWidth,
-      isMobile: false,
-      toolbarsMov: {
-        link: true, // 链接
-        imagelink: true, // 图片链接
-        /* 1.3.5 */
-        undo: true, // 上一步
-        redo: true, // 下一步
-        preview: true, // 预览
-      },
       sorts: [],
-      labels: [],
     };
-  },
-  computed: {
-    language() {},
-  },
-  watch: {
-    windowWidth(val) {
-      console.log(val);
-      this.isMobile = this.windowWidth < 768;
-    },
   },
   mounted() {
     this.getSorts();
-    var that = this;
-    window.onresize = () => {
-      return (() => {
-        window.fullWidth = document.documentElement.clientWidth;
-        that.windowWidth = window.fullWidth;
-      })();
-    };
   },
   methods: {
     getSorts() {
@@ -190,20 +170,12 @@ export default {
               title: "提示",
               message: "发布成功",
             });
-            // this.$router.push("/article/list")
             setTimeout(() => {
               this.$router.push("/article/list");
             }, 150);
           }
         });
       }
-    },
-    getArticle() {
-      console.log(this.$route.params.id);
-      fetchArticle(this.$route.params.id).then((resp) => {
-        console.log(resp);
-        this.article = resp.data;
-      });
     },
   },
 };
@@ -216,7 +188,7 @@ export default {
 }
 .v-note-wrapper {
   z-index: 1;
-  height: 680px;
+  height: 600px;
   overflow-y: scroll;
 }
 .markdown-container {

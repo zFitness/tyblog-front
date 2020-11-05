@@ -37,7 +37,26 @@
             placeholder="选择日期时间"
             align="right"
             :picker-options="pickerOptions"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            :default-value="new Date()"
           />
+        </el-form-item>
+        <el-form-item label="分类">
+          <el-select
+            v-model="article.sort.sortId"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="(item,key) in sorts"
+              :key="key"
+              :label="item.sortName"
+              :value="item.sortId"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="标签">
+          <tag-select v-model="selectedLabel"></tag-select>
         </el-form-item>
         <el-form-item label="摘要">
           <el-input
@@ -63,46 +82,56 @@
 </template>
 
 <script>
-import { fetchArticle, updateArticle } from '../../api/article'
+import { fetchArticle, updateArticle } from "../../api/article";
+import { fetchSorts } from "@/api/sort";
+import TagSelect from "./components/TagSelect";
 
 export default {
-  name: 'ArticleModify',
-  components: {},
+  name: "ArticleModify",
+  components: {
+    TagSelect,
+  },
   data() {
     return {
+      selectedLabel: [],
       pickerOptions: {
         shortcuts: [
           {
-            text: '今天',
+            text: "今天",
             onClick(picker) {
-              picker.$emit('pick', new Date())
-            }
+              picker.$emit("pick", new Date());
+            },
           },
           {
-            text: '昨天',
+            text: "昨天",
             onClick(picker) {
-              const date = new Date()
-              date.setTime(date.getTime() - 3600 * 1000 * 24)
-              picker.$emit('pick', date)
-            }
+              const date = new Date();
+              date.setTime(date.getTime() - 3600 * 1000 * 24);
+              picker.$emit("pick", date);
+            },
           },
           {
-            text: '一周前',
+            text: "一周前",
             onClick(picker) {
-              const date = new Date()
-              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', date)
-            }
-          }
-        ]
+              const date = new Date();
+              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", date);
+            },
+          },
+        ],
       },
+      sorts: [],
       dialogFormVisible: false,
       article: {
-        articleTitle: '',
-        articleDate: new Date(),
-        articleSummary: '',
-        articleStatus: 'draft',
-        articleContent: ''
+        articleTitle: "",
+        articleDate: "",
+        articleSummary: "",
+        articleStatus: "draft",
+        articleContent: "",
+        sort: {
+          sortId: null,
+        },
+        labels: [],
       },
       windowWidth: document.documentElement.clientWidth,
       isMobile: false,
@@ -112,65 +141,75 @@ export default {
         /* 1.3.5 */
         undo: true, // 上一步
         redo: true, // 下一步
-        preview: true // 预览
-      }
-    }
+        preview: true, // 预览
+      },
+    };
   },
   computed: {
-    language() {}
+    language() {},
   },
   watch: {
     windowWidth(val) {
-      console.log(val)
-      this.isMobile = this.windowWidth < 768
-    }
+      console.log(val);
+      this.isMobile = this.windowWidth < 768;
+    },
   },
   mounted() {
-    var that = this
-    this.getArticle()
+    var that = this;
+    this.getSorts();
+    this.getArticle();
     window.onresize = () => {
       return (() => {
-        window.fullWidth = document.documentElement.clientWidth
-        that.windowWidth = window.fullWidth
-      })()
-    }
+        window.fullWidth = document.documentElement.clientWidth;
+        that.windowWidth = window.fullWidth;
+      })();
+    };
   },
   methods: {
+    getSorts() {
+      fetchSorts().then((resp) => {
+        console.log(resp);
+        this.sorts = resp.data;
+      });
+    },
     handlerCreateArticle() {
-      if (this.article.articleTitle == '') {
+      if (this.article.articleTitle == "") {
         this.$notify({
-          title: '提示',
-          message: '标题不能为空'
-        })
-      } else if (this.article.articleContent == '') {
+          title: "提示",
+          message: "标题不能为空",
+        });
+      } else if (this.article.articleContent == "") {
         this.$notify({
-          title: '提示',
-          message: '内容不能为空'
-        })
+          title: "提示",
+          message: "内容不能为空",
+        });
       } else {
         updateArticle(this.article).then((resp) => {
-          console.log(resp)
+          console.log(resp);
           if (resp.code == 20000) {
             this.$notify({
-              title: '提示',
-              message: '更新成功'
-            })
-            // setTimeout(() => {
-            //   // this.$router.push("/article/list");
-            // }, 150);
+              title: "提示",
+              message: "更新成功",
+            });
+            setTimeout(() => {
+              this.$router.push("/article/list");
+            }, 150);
           }
-        })
+        });
       }
     },
     getArticle() {
-      console.log(this.$route.params.id)
+      console.log(this.$route.params.id);
       fetchArticle(this.$route.params.id).then((resp) => {
-        console.log(resp)
-        this.article = resp.data
-      })
-    }
-  }
-}
+        console.log(resp);
+        this.article = resp.data;
+        this.article.labels.forEach((label) => {
+          this.selectedLabel.push(label.labelId);
+        });
+      });
+    },
+  },
+};
 </script>
 
 <style scoped>

@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-input
         v-model="listQuery.title"
-        placeholder="Title"
+        placeholder="标题"
         style="width: 200px;margin-right:30px"
         class="filter-item"
         @keyup.enter.native="handleFilter"
@@ -16,7 +16,7 @@
         icon="el-icon-search"
         @click="handleFilter"
       >
-        Search
+        搜索
       </el-button>
       <el-button
         class="filter-item"
@@ -25,7 +25,7 @@
         icon="el-icon-edit"
         @click="handleCreate"
       >
-        Add
+        写文章
       </el-button>
       <el-button
         v-waves
@@ -35,7 +35,7 @@
         icon="el-icon-download"
         @click="handleDownload"
       >
-        Export
+        导出文章数据
       </el-button>
     </div>
 
@@ -68,7 +68,17 @@
       >
         <template slot-scope="{row}">
           <span
-            class="link-type"
+            :class="row.articleStatus=='publish'?'link-type':''"
+            @click="handleOpen(row)"
+          >{{ row.articleTitle }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="分类"
+      >
+        <template slot-scope="{row}">
+          <span
+            :class="row.articleStatus=='publish'?'link-type':''"
             @click="handleOpen(row)"
           >{{ row.articleTitle }}</span>
         </template>
@@ -98,7 +108,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="Status"
+        label="状态"
         class-name="status-col"
         width="100"
         prop="articleStatus"
@@ -115,14 +125,7 @@
         align="center"
         prop="articleDate"
       >
-        <template slot-scope="{row}">
-          <el-date-picker
-            v-model="row.articleDate"
-            type="datetime"
-            placeholder="Please pick a date"
-          />
-          <!-- <span>{{ row.articleDate | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
-        </template>
+
       </el-table-column>
       <el-table-column
         label="操作"
@@ -321,8 +324,11 @@ export default {
       this.$router.push("/article/update/" + row.articleId);
     },
     handleOpen(row) {
-      window.open("http://localhost:8080/article/" + row.articleId, "_blank")
-        .location;
+      //判断是否可以访问
+      if (row.articleStatus == "publish") {
+        window.open("http://localhost:8080/article/" + row.articleId, "_blank")
+          .location;
+      }
     },
     updateData() {
       this.$refs["dataForm"].validate((valid) => {

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-row gutter="40">
+    <el-row :gutter="40">
       <el-col
         :xs="{span: 24}"
         :sm="{span: 24}"
