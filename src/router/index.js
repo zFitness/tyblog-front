@@ -84,17 +84,17 @@ export const constantRoutes = [
         }
       },
       {
-        path: "sort",
-        component: () => import("@/views/article/add"),
-        name: "Sort",
+        path: "category",
+        component: () => import("@/views/category/"),
+        name: "Category",
         meta: {
           title: "分类目录"
         }
       },
       {
-        path: "label",
-        component: () => import("@/views/article/add"),
-        name: "Label",
+        path: "tag",
+        component: () => import("@/views/tag"),
+        name: "Tag",
         meta: {
           title: "标签"
         }
