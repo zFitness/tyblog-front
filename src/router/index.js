@@ -124,7 +124,7 @@ export const constantRoutes = [
     children: [
       {
         path: "list",
-        component: () => import("@/views/article/list"),
+        component: () => import("@/views/sheet/list"),
         name: "SheetList",
         meta: {
           title: "所有页面"
@@ -136,6 +136,14 @@ export const constantRoutes = [
         name: "SheetAdd",
         meta: {
           title: "添加页面"
+        }
+      },
+      {
+        path: "links",
+        component: () => import("@/views/links"),
+        name: "Links",
+        meta: {
+          title: "友链"
         }
       }
     ]
