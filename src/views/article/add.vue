@@ -1,5 +1,8 @@
 <template>
-  <div class="markdown-container">
+  <div
+    class="markdown-container"
+    v-if="loaded"
+  >
     <mavon-editor
       v-model="article.articleContent"
       :ishljs="true"
@@ -30,7 +33,7 @@
         </el-form-item>
         <el-form-item label="发表日期">
           <el-date-picker
-            v-model="article.articleDate"
+            v-model="article.createTime"
             type="datetime"
             placeholder="选择日期时间"
             align="right"
@@ -45,8 +48,8 @@
             placeholder="请选择"
           >
             <el-option
-              v-for="(item,key) in sorts"
-              :key="key"
+              v-for="item in sorts"
+              :key="item.sortId"
               :label="item.sortName"
               :value="item.sortId"
             >
@@ -55,14 +58,6 @@
         </el-form-item>
         <el-form-item label="标签">
           <tag-select v-model="selectedLabel"></tag-select>
-        </el-form-item>
-        <el-form-item label="摘要">
-          <el-input
-            v-model="article.articleSummary"
-            type="textarea"
-            :rows="4"
-            placeholder="为空则自动生成"
-          />
         </el-form-item>
       </el-form>
       <div
@@ -83,16 +78,15 @@
 import { createArticle } from "@/api/article";
 import { fetchSorts } from "@/api/sort";
 import TagSelect from "./components/TagSelect";
-import SortSelectTree from "./components/SortSelectTree";
 
 export default {
-  name: "ArticleModify",
+  name: "ArticleAdd",
   components: {
     TagSelect,
-    SortSelectTree,
   },
   data() {
     return {
+      loaded: false,
       selectedLabel: [],
       pickerOptions: {
         shortcuts: [
@@ -123,7 +117,7 @@ export default {
       dialogFormVisible: false,
       article: {
         articleTitle: "",
-        articleDate: "",
+        createTime: "",
         articleSummary: "",
         articleStatus: "draft",
         articleContent: "",
@@ -143,6 +137,7 @@ export default {
       fetchSorts().then((resp) => {
         console.log(resp);
         this.sorts = resp.data;
+        this.loaded = true;
       });
     },
 

@@ -3,8 +3,6 @@
     <mavon-editor
       v-model="article.articleContent"
       :ishljs="true"
-      :toolbars="isMobile?toolbarsMov:undefined"
-      :subfield="!isMobile"
     />
     <el-button
       type="primary"
@@ -32,7 +30,7 @@
         </el-form-item>
         <el-form-item label="发表日期">
           <el-date-picker
-            v-model="article.articleDate"
+            v-model="article.createTime"
             type="datetime"
             placeholder="选择日期时间"
             align="right"
@@ -47,8 +45,8 @@
             placeholder="请选择"
           >
             <el-option
-              v-for="(item,key) in sorts"
-              :key="key"
+              v-for="item in sorts"
+              :key="item.sortId"
               :label="item.sortName"
               :value="item.sortId"
             >
@@ -57,14 +55,6 @@
         </el-form-item>
         <el-form-item label="标签">
           <tag-select v-model="selectedLabel"></tag-select>
-        </el-form-item>
-        <el-form-item label="摘要">
-          <el-input
-            v-model="article.articleSummary"
-            type="textarea"
-            :rows="4"
-            placeholder="为空则自动生成"
-          />
         </el-form-item>
       </el-form>
       <div
@@ -133,42 +123,19 @@ export default {
         },
         labels: [],
       },
-      windowWidth: document.documentElement.clientWidth,
-      isMobile: false,
-      toolbarsMov: {
-        link: true, // 链接
-        imagelink: true, // 图片链接
-        /* 1.3.5 */
-        undo: true, // 上一步
-        redo: true, // 下一步
-        preview: true, // 预览
-      },
     };
   },
   computed: {
     language() {},
   },
-  watch: {
-    windowWidth(val) {
-      console.log(val);
-      this.isMobile = this.windowWidth < 768;
-    },
-  },
   mounted() {
     var that = this;
     this.getSorts();
     this.getArticle();
-    window.onresize = () => {
-      return (() => {
-        window.fullWidth = document.documentElement.clientWidth;
-        that.windowWidth = window.fullWidth;
-      })();
-    };
   },
   methods: {
     getSorts() {
       fetchSorts().then((resp) => {
-        console.log(resp);
         this.sorts = resp.data;
       });
     },
@@ -184,8 +151,14 @@ export default {
           message: "内容不能为空",
         });
       } else {
+        this.article.labels = [];
+        this.selectedLabel.forEach((labelId) => {
+          this.article.labels.push({
+            labelId: labelId,
+          });
+        });
+
         updateArticle(this.article).then((resp) => {
-          console.log(resp);
           if (resp.code == 20000) {
             this.$notify({
               title: "提示",
@@ -199,13 +172,8 @@ export default {
       }
     },
     getArticle() {
-      console.log(this.$route.params.id);
       fetchArticle(this.$route.params.id).then((resp) => {
-        console.log(resp);
         this.article = resp.data;
-        this.article.labels.forEach((label) => {
-          this.selectedLabel.push(label.labelId);
-        });
       });
     },
   },

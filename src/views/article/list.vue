@@ -73,14 +73,9 @@
           >{{ row.articleTitle }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="分类"
-      >
+      <el-table-column label="分类">
         <template slot-scope="{row}">
-          <span
-            :class="row.articleStatus=='publish'?'link-type':''"
-            @click="handleOpen(row)"
-          >{{ row.articleTitle }}</span>
+          <span>{{ row.sort.sortName }}</span>
         </template>
       </el-table-column>
       <el-table-column

@@ -57,6 +57,7 @@ export default {
       this.labels.forEach((label) => {
         labelIdMap[label.labelId] = label;
       });
+      return labelIdMap;
     },
   },
   methods: {
