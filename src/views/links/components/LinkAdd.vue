@@ -5,7 +5,7 @@
         slot="header"
         class="clearfix"
       >
-        <span>添加友链</span>
+        <span v-text="isAdd?'添加友链':'修改友链'"></span>
       </div>
       <el-form
         :model="linkForm"
@@ -44,10 +44,23 @@
         </el-form-item>
         <el-form-item>
           <el-button
+            v-if="!isAdd"
+            type="primary"
+            @click="submitForm('ruleForm')"
+          >更新</el-button>
+          <el-button
+            v-if="!isAdd"
+            @click="resetForm('ruleForm')"
+          >返回添加</el-button>
+          <el-button
+            v-if="isAdd"
             type="primary"
             @click="submitForm('ruleForm')"
           >保存</el-button>
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
+          <el-button
+            v-if="isAdd"
+            @click="resetForm('ruleForm')"
+          >重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -56,12 +69,25 @@
 </template>
 
 <script>
-import { addLink } from "@/api/links";
+import { addLink, updateLink } from "@/api/links";
+import { EventBus } from "./event-bus";
+import editor from "mavon-editor";
+import { Row } from "element-ui";
 
 export default {
   data() {
     return {
+      isAdd: true,
+      updateForm: {},
       linkForm: {
+        linkName: "",
+        linkImage: "",
+        linkDescription: "",
+        linkUrl: "",
+        linkImage: "",
+        linkTarget: "_blank",
+      },
+      linkFormCopy: {
         linkName: "",
         linkImage: "",
         linkDescription: "",
@@ -117,29 +143,60 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          addLink(this.linkForm).then((resp) => {
-            if (resp.code == 20000) {
-              this.$notify({
-                title: "成功",
-                message: "添加成功",
-                type: "success",
-              });
-              this.resetForm("ruleForm");
-            } else {
-              this.$notify.error({
-                title: "错误",
-                message: "添加失败",
-              });
-            }
-          });
+          if (this.isAdd) {
+            addLink(this.linkForm).then((resp) => {
+              if (resp.code == 20000) {
+                this.$notify({
+                  title: "成功",
+                  message: "添加成功",
+                  type: "success",
+                });
+                this.resetForm("ruleForm");
+              } else {
+                this.$notify.error({
+                  title: "错误",
+                  message: "添加失败",
+                });
+              }
+            });
+          } else {
+            updateLink(this.linkForm).then((resp) => {
+              if (resp.code == 20000) {
+                this.$notify({
+                  title: "成功",
+                  message: "修改成功",
+                  type: "success",
+                });
+                this.resetForm("ruleForm");
+              } else {
+                this.$notify.error({
+                  title: "错误",
+                  message: "修改失败",
+                });
+              }
+            });
+          }
         } else {
           return false;
         }
       });
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields();
+      if (!this.isAdd) {
+        //点击返回添加时
+        this.isAdd = true;
+        this.linkForm = this.linkFormCopy;
+      } else {
+        this.$refs[formName].resetFields();
+      }
     },
+  },
+  mounted() {
+    EventBus.$on("edit", (param) => {
+      console.log(param);
+      this.isAdd = false;
+      this.linkForm = param;
+    });
   },
 };
 </script>

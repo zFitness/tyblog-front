@@ -59,7 +59,7 @@
             <el-button
               type="text"
               size="small"
-              @click="handleEdit(row.linkId)"
+              @click="handleEdit(row)"
             >编辑</el-button>
             <el-divider direction="vertical"></el-divider>
             <el-dropdown
@@ -100,7 +100,9 @@ export default {
     Pagination,
   },
   methods: {
-    handleEdit(linkId) {},
+    handleEdit(row) {
+      EventBus.$emit("edit", row);
+    },
     handleSwitchChange(row) {
       console.log(row);
       setLinkVisible(row.linkId, row.visible).then((resp) => {

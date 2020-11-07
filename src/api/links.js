@@ -31,3 +31,11 @@ export function addLink(data) {
     data
   });
 }
+
+export function updateLink(data) {
+  return request({
+    url: "api/admin/links/update",
+    method: "post",
+    data
+  });
+}
