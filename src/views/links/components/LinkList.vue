@@ -5,7 +5,7 @@
         slot="header"
         class="clearfix"
       >
-        <span>分类列表</span>
+        <span>友链列表</span>
       </div>
       <el-table
         :data="tableData"

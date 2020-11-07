@@ -197,7 +197,7 @@ export const constantRoutes = [
     children: [
       {
         path: "options",
-        component: () => import("@/views/article/list"),
+        component: () => import("@/views/system/options"),
         name: "Options",
         meta: {
           title: "博客设置"

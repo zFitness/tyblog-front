@@ -53,18 +53,17 @@ export default {
         },
         {
           status: "可用",
-          name: "友情链接",
+          name: "照片墙",
           address: "http://localhost:8090/links",
         },
       ],
     };
-
   },
   methods: {
     edit() {
-      this.$router.push('/sheets/links')
-    }
-  }
+      this.$router.push("/sheets/links");
+    },
+  },
 };
 </script>
 
