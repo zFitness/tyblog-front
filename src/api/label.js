@@ -4,8 +4,7 @@ export function fetchLabels() {
   return request({
     url: "api/admin/labels",
     method: "get",
-    params: {},
-    baseURL: "http://localhost:8080"
+    params: {}
   });
 }
 
@@ -13,7 +12,22 @@ export function createLabel(labelName) {
   return request({
     url: "api/admin/labels/addByName",
     method: "post",
-    params: { labelName },
-    baseURL: "http://localhost:8080"
+    params: { labelName }
+  });
+}
+
+export function updateLabel(data) {
+  return request({
+    url: "api/admin/labels/update",
+    method: "post",
+    data: data
+  });
+}
+
+export function deleteLabel(labelId) {
+  return request({
+    url: "api/admin/labels/delete",
+    method: "post",
+    params: { labelId }
   });
 }
