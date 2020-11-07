@@ -118,7 +118,7 @@
         label="发布日期"
         width="250"
         align="center"
-        prop="articleDate"
+        prop="createTime"
       >
 
       </el-table-column>

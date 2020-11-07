@@ -23,3 +23,11 @@ export function deleteLink(linkId) {
     params: { linkId }
   });
 }
+
+export function addLink(data) {
+  return request({
+    url: "api/admin/links/add",
+    method: "post",
+    data
+  });
+}

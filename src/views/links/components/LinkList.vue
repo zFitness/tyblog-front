@@ -16,7 +16,6 @@
         <el-table-column
           prop="linkName"
           label="名称"
-          width="150"
         >
         </el-table-column>
         <el-table-column
@@ -24,12 +23,15 @@
           label="网址"
         >
         </el-table-column>
-        <el-table-column label="状态">
+        <el-table-column
+          label="状态"
+          align="center"
+        >
           <template slot-scope="{row}">
             <el-switch
               v-model="row.visible"
-              active-text="可见"
-              inactive-text="不可见"
+              active-text=""
+              inactive-text=""
               @change="handleSwitchChange(row)"
             >
             </el-switch>
@@ -57,6 +59,7 @@
             <el-button
               type="text"
               size="small"
+              @click="handleEdit(row.linkId)"
             >编辑</el-button>
             <el-divider direction="vertical"></el-divider>
             <el-dropdown
@@ -68,7 +71,7 @@
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="{'tag': 'a', 'linkId': row.linkId, 'index': $index}">删除</el-dropdown-item>
-                <el-dropdown-item :command="{'tag': 'a', 'linkId': row.linkId}">测试</el-dropdown-item>
+                <el-dropdown-item :command="{'tag': 'b', 'linkId': row.linkId, 'index': $index}">测试</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -90,15 +93,25 @@
 <script>
 import { listLinks, setLinkVisible, deleteLink } from "@/api/links";
 import Pagination from "@/components/Pagination";
+import { EventBus } from "./event-bus";
 
 export default {
   components: {
     Pagination,
   },
   methods: {
+    handleEdit(linkId) {},
     handleSwitchChange(row) {
       console.log(row);
-      setLinkVisible(row.linkId, row.visible).then((resp) => {});
+      setLinkVisible(row.linkId, row.visible).then((resp) => {
+        if (resp.code == 20000) {
+          this.$notify({
+            title: "成功",
+            message: "修改成功",
+            type: "success",
+          });
+        }
+      });
     },
     handleClick(row) {
       console.log(row);
@@ -117,6 +130,7 @@ export default {
             console.log(resp);
             if (resp.code == 20000) {
               this.tableData.splice(command["index"], 1);
+              this.total--;
               this.$notify({
                 title: "成功",
                 message: "删除成功",
