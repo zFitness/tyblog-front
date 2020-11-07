@@ -5,7 +5,7 @@
         slot="header"
         class="clearfix"
       >
-        <span>添加分类</span>
+        <span v-text="isAdd?'添加分类':'修改分类'"></span>
       </div>
       <el-form
         :model="ruleForm"
@@ -16,50 +16,62 @@
       >
         <el-form-item
           label="名称"
-          prop="name"
+          prop="sortName"
         >
-          <el-input v-model="ruleForm.name"></el-input>
+          <el-input v-model="ruleForm.sortName"></el-input>
         </el-form-item>
         <el-form-item
           label="别名"
-          prop="name"
+          prop="sortAlias"
         >
-          <el-input v-model="ruleForm.name"></el-input>
+          <el-input v-model="ruleForm.sortAlias"></el-input>
         </el-form-item>
         <el-form-item
           label="上级目录"
-          prop="region"
+          prop="parentSortId"
         >
           <el-select
-            v-model="ruleForm.region"
-            placeholder="请选择活动区域"
+            v-model="ruleForm.parentSortId"
+            placeholder="请选择父目录"
           >
             <el-option
-              label="区域一"
-              value="shanghai"
-            ></el-option>
-            <el-option
-              label="区域二"
-              value="beijing"
+              v-for="(item,key) in sorts"
+              :key="key"
+              :label="item.sortName"
+              :value="item.sortId"
             ></el-option>
           </el-select>
         </el-form-item>
 
         <el-form-item
           label="描述"
-          prop="desc"
+          prop="sortDescription"
         >
           <el-input
             type="textarea"
-            v-model="ruleForm.desc"
+            v-model="ruleForm.sortDescription"
           ></el-input>
         </el-form-item>
         <el-form-item>
           <el-button
+            v-show="!isAdd"
+            type="primary"
+            @click="submitForm('ruleForm')"
+          >更新</el-button>
+          <el-button
+            v-show="!isAdd"
+            @click="resetForm('ruleForm')"
+          >返回添加</el-button>
+
+          <el-button
+            v-show="isAdd"
             type="primary"
             @click="submitForm('ruleForm')"
           >保存</el-button>
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
+          <el-button
+            v-show="isAdd"
+            @click="resetForm('ruleForm')"
+          >重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -68,55 +80,31 @@
 </template>
 
 <script>
+import { addSort, fetchSorts, updateSort } from "@/api/sort";
+import { EventBus } from "./event-bus";
+
 export default {
   data() {
     return {
+      isAdd: true,
+      sorts: [],
       ruleForm: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: "",
+        parentSortId: 0,
+        sortAlias: "",
+        sortDescription: "",
+        sortName: "",
+      },
+      ruleFormCopy: {
+        parentSortId: 0,
+        sortAlias: "",
+        sortDescription: "",
+        sortName: "",
       },
       rules: {
-        name: [
+        sortName: [
           { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
+          { min: 1, max: 10, message: "长度在 1 到 5 个字符", trigger: "blur" },
         ],
-        region: [
-          { required: true, message: "请选择活动区域", trigger: "change" },
-        ],
-        date1: [
-          {
-            type: "date",
-            required: true,
-            message: "请选择日期",
-            trigger: "change",
-          },
-        ],
-        date2: [
-          {
-            type: "date",
-            required: true,
-            message: "请选择时间",
-            trigger: "change",
-          },
-        ],
-        type: [
-          {
-            type: "array",
-            required: true,
-            message: "请至少选择一个活动性质",
-            trigger: "change",
-          },
-        ],
-        resource: [
-          { required: true, message: "请选择活动资源", trigger: "change" },
-        ],
-        desc: [{ required: true, message: "请填写活动形式", trigger: "blur" }],
       },
     };
   },
@@ -124,16 +112,73 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert("submit!");
+          if (this.isAdd) {
+            addSort(this.ruleForm).then((resp) => {
+              if (resp.code == 20000) {
+                this.$notify({
+                  title: "成功",
+                  message: "添加成功",
+                  type: "success",
+                });
+                this.resetForm("ruleForm");
+                //让分类列表进行更新
+                EventBus.$emit("add");
+              } else {
+                this.$notify.error({
+                  title: "错误",
+                  message: "添加失败",
+                });
+              }
+            });
+          } else {
+            updateSort(this.ruleForm).then((resp) => {
+              if (resp.code == 20000) {
+                this.$notify({
+                  title: "成功",
+                  message: "修改成功",
+                  type: "success",
+                });
+                this.resetForm("ruleForm");
+              } else {
+                this.$notify.error({
+                  title: "错误",
+                  message: "修改失败",
+                });
+              }
+            });
+          }
         } else {
           console.log("error submit!!");
           return false;
         }
       });
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    getSorts() {
+      fetchSorts().then((resp) => {
+        this.sorts = resp.data;
+      });
     },
+    resetForm(formName) {
+      if (!this.isAdd) {
+        //点击返回添加时
+        this.isAdd = true;
+        this.ruleForm = this.ruleFormCopy;
+      } else {
+        this.$refs[formName].resetFields();
+      }
+    },
+  },
+  mounted() {
+    this.getSorts();
+    EventBus.$on("edit", (param) => {
+      console.log(param);
+      this.isAdd = false;
+      this.ruleForm = param;
+    });
+
+    EventBus.$on("delete", () => {
+      this.resetForm("ruleForm");
+    });
   },
 };
 </script>

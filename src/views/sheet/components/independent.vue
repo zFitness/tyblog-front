@@ -30,7 +30,7 @@
             type="text"
             size="small"
             @click="edit"
-          >编辑</el-button>
+          >管理</el-button>
           <el-divider direction="vertical"></el-divider>
           <el-button
             type="text"

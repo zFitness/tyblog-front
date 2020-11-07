@@ -14,24 +14,24 @@
         style="width:100%"
       >
         <el-table-column
-          prop="date"
+          prop="sortName"
           label="名称"
           width="150"
         >
         </el-table-column>
         <el-table-column
-          prop="name"
+          prop="sortAlias"
           label="别名"
           width="120"
         >
         </el-table-column>
         <el-table-column
-          prop="province"
+          prop="sortDescription"
           label="描述"
         >
         </el-table-column>
         <el-table-column
-          prop="city"
+          prop="count"
           label="文章数"
           width="120"
         >
@@ -41,24 +41,34 @@
           label="操作"
           width="100"
         >
-          <template slot-scope="scope">
+          <template slot-scope="{row, $index}">
             <el-button
               type="text"
               size="small"
+              @click="handleEdit(row)"
             >编辑</el-button>
             <el-divider direction="vertical"></el-divider>
-            <el-dropdown trigger="click">
+            <el-dropdown
+              trigger="click"
+              @command="handleCommand"
+            >
               <span class="el-dropdown-link">
                 更多
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>添加到菜单</el-dropdown-item>
-                <el-dropdown-item>删除</el-dropdown-item>
+                <el-dropdown-item :command="{'tag': 'a', 'sortId': row.sortId, 'index': $index}">添加到菜单</el-dropdown-item>
+                <el-dropdown-item :command="{'tag': 'b', 'sortId': row.sortId, 'index': $index}">删除</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
+      <pagination
+        :total="total"
+        :page.sync="listQuery.current"
+        :limit.sync="listQuery.size"
+        @pagination="listSorts"
+      />
     </el-card>
 
   </div>
@@ -66,49 +76,59 @@
 </template>
 
 <script>
+import { fetchSorts, deleteSort } from "@/api/sort";
+import Pagination from "@/components/Pagination";
+import { EventBus } from "./event-bus";
+
 export default {
+  components: {
+    Pagination,
+  },
+  mounted() {
+    this.listSorts();
+  },
   methods: {
+    handleEdit(row) {
+      EventBus.$emit("edit", row);
+    },
     handleClick(row) {
       console.log(row);
+    },
+    listSorts() {
+      fetchSorts().then((resp) => {
+        this.tableData = resp.data;
+      });
+    },
+    handleCommand(command) {
+      console.log(command);
+      switch (command["tag"]) {
+        case "b":
+          deleteSort(command["sortId"]).then((resp) => {
+            if (resp.code == 20000) {
+              this.tableData.splice(command["index"], 1);
+              this.total--;
+              this.$notify({
+                title: "成功",
+                message: "删除成功",
+                type: "success",
+              });
+              //如果在删除之前点击了更新按钮需要把更新组件清空
+              EventBus.$emit("delete");
+            }
+          });
+          break;
+      }
     },
   },
 
   data() {
     return {
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1517 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1519 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1516 弄",
-          zip: 200333,
-        },
-      ],
+      tableData: [],
+      total: 0,
+      listQuery: {
+        current: 1,
+        size: 10,
+      },
     };
   },
 };

@@ -9,7 +9,7 @@
         :xl="{span: 12}"
         style="padding-right:8px;margin-bottom:30px;"
       >
-        <category-list></category-list>
+        <category-list :key="key"></category-list>
       </el-col>
       <el-col
         :xs="{span: 24}"
@@ -29,10 +29,25 @@
 <script>
 import CategoryList from "./components/CategoryList";
 import CategoryAdd from "./components/CategoryAdd";
+import { EventBus } from "./components/event-bus";
 export default {
+  mounted() {
+    EventBus.$on("add", () => {
+      this.key++;
+    });
+  },
+  destroyed() {
+    EventBus.$off("add", {});
+    EventBus.$off("edit", {});
+  },
   components: {
     CategoryList,
     CategoryAdd,
+  },
+  data() {
+    return {
+      key: 1,
+    };
   },
 };
 </script>

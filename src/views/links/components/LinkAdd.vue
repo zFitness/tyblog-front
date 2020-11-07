@@ -152,6 +152,8 @@ export default {
                   type: "success",
                 });
                 this.resetForm("ruleForm");
+                //让友情链接列表进行更新
+                EventBus.$emit("add");
               } else {
                 this.$notify.error({
                   title: "错误",
@@ -196,6 +198,9 @@ export default {
       console.log(param);
       this.isAdd = false;
       this.linkForm = param;
+    });
+    EventBus.$on("delete", () => {
+      this.resetForm("ruleForm");
     });
   },
 };

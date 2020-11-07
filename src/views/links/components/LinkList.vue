@@ -129,7 +129,7 @@ export default {
       switch (command["tag"]) {
         case "a":
           deleteLink(command["linkId"]).then((resp) => {
-            console.log(resp);
+            EventBus.$emit("delete");
             if (resp.code == 20000) {
               this.tableData.splice(command["index"], 1);
               this.total--;
