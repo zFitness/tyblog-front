@@ -29,7 +29,7 @@
         >
           <back-to-blog class="right-menu-item hover-effect"></back-to-blog>
         </el-tooltip>
-        
+
         <el-tooltip
           content="Global Size"
           effect="dark"
@@ -49,7 +49,7 @@
       >
         <div class="avatar-wrapper">
           <img
-            :src="avatar+'?imageView2/1/w/80/h/80'"
+            :src="avatar"
             class="user-avatar"
           >
           <i class="el-icon-caret-bottom" />
@@ -59,7 +59,7 @@
             <el-dropdown-item>个人信息</el-dropdown-item>
           </router-link>
           <router-link to="/">
-            <el-dropdown-item>Dashboard</el-dropdown-item>
+            <el-dropdown-item>仪表盘</el-dropdown-item>
           </router-link>
           <a
             target="_blank"
@@ -67,17 +67,11 @@
           >
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
-          <a
-            target="_blank"
-            href="https://panjiachen.github.io/vue-element-admin-site/#/"
-          >
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
           <el-dropdown-item
             divided
             @click.native="logout"
           >
-            <span style="display:block;">Log Out</span>
+            <span style="display:block;">注销登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>

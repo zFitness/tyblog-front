@@ -249,7 +249,6 @@ export default {
     getList() {
       this.listLoading = true;
       fetchList(this.listQuery).then((response) => {
-        console.log(response);
         this.list = response.data.records;
         this.total = response.data.total;
         this.listLoading = false;
@@ -261,7 +260,6 @@ export default {
     },
     handleModifyStatus(row, status) {
       setArticleStatus(row.articleId, status).then((resp) => {
-        console.log(resp);
         this.$message({
           message: "操作Success",
           type: "success",
@@ -352,7 +350,6 @@ export default {
       })
         .then(() => {
           deleteArticle(row.articleId).then((resp) => {
-            console.log(resp);
             this.$message({
               type: "success",
               message: "删除成功!",
