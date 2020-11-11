@@ -32,7 +32,7 @@
         :xl="{span: 6}"
         style="margin-bottom:30px;"
       >
-        <box-card />
+
       </el-col>
     </el-row>
   </div>

@@ -145,7 +145,7 @@ export default {
         if (valid) {
           if (this.isAdd) {
             addLink(this.linkForm).then((resp) => {
-              if (resp.code == 20000) {
+              if (resp.code == 200) {
                 this.$notify({
                   title: "成功",
                   message: "添加成功",
@@ -163,7 +163,7 @@ export default {
             });
           } else {
             updateLink(this.linkForm).then((resp) => {
-              if (resp.code == 20000) {
+              if (resp.code == 200) {
                 this.$notify({
                   title: "成功",
                   message: "修改成功",

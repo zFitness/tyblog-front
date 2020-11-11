@@ -79,7 +79,7 @@ export default {
   methods: {
     handleDelete() {
       deleteLabel(this.ruleForm.labelId).then((resp) => {
-        if (resp.code == 20000) {
+        if (resp.code == 200) {
           this.$notify({
             title: "成功",
             message: "删除成功",
@@ -91,7 +91,7 @@ export default {
         } else {
           this.$notify.error({
             title: "错误",
-            message: "删除失败",
+            message: resp.data,
           });
         }
       });
@@ -101,7 +101,7 @@ export default {
         if (valid) {
           if (this.isAdd) {
             createLabel(this.ruleForm.labelName).then((resp) => {
-              if (resp.code == 20000) {
+              if (resp.code == 200) {
                 this.$notify({
                   title: "成功",
                   message: "添加成功",
@@ -113,13 +113,13 @@ export default {
               } else {
                 this.$notify.error({
                   title: "错误",
-                  message: "添加失败",
+                  message: resp.message,
                 });
               }
             });
           } else {
             updateLabel(this.ruleForm).then((resp) => {
-              if (resp.code == 20000) {
+              if (resp.code == 200) {
                 this.$notify({
                   title: "成功",
                   message: "修改成功",
@@ -129,7 +129,7 @@ export default {
               } else {
                 this.$notify.error({
                   title: "错误",
-                  message: "修改失败",
+                  message: resp.message,
                 });
               }
             });

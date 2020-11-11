@@ -104,7 +104,7 @@ export default {
       switch (command["tag"]) {
         case "b":
           deleteSort(command["sortId"]).then((resp) => {
-            if (resp.code == 20000) {
+            if (resp.code == 200) {
               this.tableData.splice(command["index"], 1);
               this.total--;
               this.$notify({

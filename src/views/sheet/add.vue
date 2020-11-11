@@ -1,7 +1,10 @@
 <template>
-  <div class="markdown-container">
+  <div
+    class="markdown-container"
+    v-if="loaded"
+  >
     <mavon-editor
-      v-model="article.articleContent"
+      v-model="sheet.sheetContent"
       :ishljs="true"
     />
     <el-button
@@ -12,25 +15,45 @@
 
     <!-- 编辑发布dialog -->
     <el-dialog
-      title="文章设置"
+      title="页面设置"
       :visible.sync="dialogFormVisible"
     >
-      <el-form :model="article">
-        <el-form-item label="文章标题">
+      <el-form
+        :model="sheet"
+        label-position="top"
+      >
+        <el-form-item label="页面标题">
           <el-input
-            v-model="article.articleTitle"
+            v-model="sheet.sheetTitle"
+            autocomplete="off"
+          />
+        </el-form-item>
+        <el-form-item label="页面别名">
+          <el-input
+            v-model="sheet.sheetSlug"
             autocomplete="off"
           />
         </el-form-item>
         <el-form-item label="状态">
-          <el-radio-group v-model="article.articleStatus">
+          <el-radio-group
+            v-model="sheet.sheetStatus"
+            label="状态"
+          >
             <el-radio :label="'publish'">发布</el-radio>
             <el-radio :label="'draft'">草稿</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="是否开启评论">
+          <el-switch
+            v-model="sheet.commentStatus"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+          >
+          </el-switch>
+        </el-form-item>
         <el-form-item label="发表日期">
           <el-date-picker
-            v-model="article.createTime"
+            v-model="sheet.createTime"
             type="datetime"
             placeholder="选择日期时间"
             align="right"
@@ -39,23 +62,7 @@
             :default-value="new Date()"
           />
         </el-form-item>
-        <el-form-item label="分类">
-          <el-select
-            v-model="article.sort.sortId"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in sorts"
-              :key="item.sortId"
-              :label="item.sortName"
-              :value="item.sortId"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="标签">
-          <tag-select v-model="selectedLabel"></tag-select>
-        </el-form-item>
+
       </el-form>
       <div
         slot="footer"
@@ -64,7 +71,7 @@
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button
           type="primary"
-          @click="handlerCreateArticle"
+          @click="handlerCreateSheet"
         >确 定</el-button>
       </div>
     </el-dialog>
@@ -72,17 +79,15 @@
 </template>
 
 <script>
-import { fetchArticle, updateArticle } from "../../api/article";
+import { createSheet } from "@/api/sheet";
 import { fetchSorts } from "@/api/sort";
-import TagSelect from "./components/TagSelect";
 
 export default {
-  name: "ArticleModify",
-  components: {
-    TagSelect,
-  },
+  name: "SheetAdd",
+  components: {},
   data() {
     return {
+      loaded: false,
       selectedLabel: [],
       pickerOptions: {
         shortcuts: [
@@ -110,71 +115,66 @@ export default {
           },
         ],
       },
-      sorts: [],
       dialogFormVisible: false,
-      article: {
-        articleTitle: "",
-        articleDate: "",
-        articleSummary: "",
-        articleStatus: "draft",
-        articleContent: "",
-        sort: {
-          sortId: null,
-        },
-        labels: [],
+      sheet: {
+        sheetTitle: "",
+        sheetSlug: "",
+        createTime: "",
+        sheetSummary: "",
+        sheetStatus: "draft",
+        sheetContent: "",
+        commentStatus: true,
       },
+      sorts: [],
     };
   },
-  computed: {
-    language() {},
-  },
   mounted() {
-    var that = this;
     this.getSorts();
-    this.getArticle();
   },
   methods: {
     getSorts() {
       fetchSorts().then((resp) => {
+        console.log(resp);
         this.sorts = resp.data;
+        this.loaded = true;
       });
     },
-    handlerCreateArticle() {
-      if (this.article.articleTitle == "") {
+
+    handlerCreateSheet() {
+      if (this.sheet.sheetTitle == "") {
         this.$notify({
           title: "提示",
           message: "标题不能为空",
         });
-      } else if (this.article.articleContent == "") {
+      } else if (this.sheet.sheetContent == "") {
         this.$notify({
           title: "提示",
           message: "内容不能为空",
         });
       } else {
-        this.article.labels = [];
         this.selectedLabel.forEach((labelId) => {
-          this.article.labels.push({
+          this.sheet.labels.push({
             labelId: labelId,
           });
         });
-
-        updateArticle(this.article).then((resp) => {
+        createSheet(this.sheet).then((resp) => {
+          console.log(resp);
           if (resp.code == 200) {
             this.$notify({
               title: "提示",
-              message: "更新成功",
+              message: "发布成功",
             });
             setTimeout(() => {
-              this.$router.push("/article/list");
+              this.$router.push("/sheets/list");
             }, 150);
+          } else {
+            this.$notify({
+              title: "提示",
+              message: resp.message,
+            });
           }
         });
       }
-    },
-    getArticle() {
-      fetchArticle(this.$route.params.id).then((resp) => {
-        this.article = resp.data;
-      });
     },
   },
 };
@@ -187,7 +187,7 @@ export default {
 }
 .v-note-wrapper {
   z-index: 1;
-  height: 680px;
+  height: 600px;
   overflow-y: scroll;
 }
 .markdown-container {

@@ -18,10 +18,14 @@
           label="名称"
         >
         </el-table-column>
-        <el-table-column
-          prop="linkUrl"
-          label="网址"
-        >
+        <el-table-column label="网址">
+          <template slot-scope="{row}">
+            <a
+              :href="row.linkUrl"
+              target="_blank"
+            >{{row.linkUrl}}</a>
+          </template>
+
         </el-table-column>
         <el-table-column
           label="状态"
@@ -106,7 +110,7 @@ export default {
     handleSwitchChange(row) {
       console.log(row);
       setLinkVisible(row.linkId, row.visible).then((resp) => {
-        if (resp.code == 20000) {
+        if (resp.code == 200) {
           this.$notify({
             title: "成功",
             message: "修改成功",
@@ -130,7 +134,7 @@ export default {
         case "a":
           deleteLink(command["linkId"]).then((resp) => {
             EventBus.$emit("delete");
-            if (resp.code == 20000) {
+            if (resp.code == 200) {
               this.tableData.splice(command["index"], 1);
               this.total--;
               this.$notify({

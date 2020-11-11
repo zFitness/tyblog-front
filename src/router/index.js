@@ -132,7 +132,7 @@ export const constantRoutes = [
       },
       {
         path: "add",
-        component: () => import("@/views/article/add"),
+        component: () => import("@/views/sheet/add"),
         name: "SheetAdd",
         meta: {
           title: "添加页面"
@@ -154,7 +154,7 @@ export const constantRoutes = [
     children: [
       {
         path: "",
-        component: () => import("@/views/article/list"),
+        component: () => import("@/views/comment"),
         name: "CommentList",
         meta: { title: "评论", icon: "el-icon-s-comment" }
       }

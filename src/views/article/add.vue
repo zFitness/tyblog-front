@@ -160,7 +160,7 @@ export default {
         });
         createArticle(this.article).then((resp) => {
           console.log(resp);
-          if (resp.code == 20000) {
+          if (resp.code == 200) {
             this.$notify({
               title: "提示",
               message: "发布成功",
@@ -168,6 +168,11 @@ export default {
             setTimeout(() => {
               this.$router.push("/article/list");
             }, 150);
+          } else {
+            this.$notify({
+              title: "提示",
+              message: resp.message,
+            });
           }
         });
       }

@@ -75,7 +75,7 @@
       </el-table-column>
       <el-table-column label="分类">
         <template slot-scope="{row}">
-          <span>{{ row.sort.sortName }}</span>
+          <span v-text="row.sort==null?'':row.sort.sortName"></span>
         </template>
       </el-table-column>
       <el-table-column
@@ -355,6 +355,7 @@ export default {
               message: "删除成功!",
             });
             this.list.splice(index, 1);
+            this.total--;
           });
         })
         .catch(() => {
