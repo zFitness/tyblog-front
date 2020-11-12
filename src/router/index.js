@@ -139,12 +139,22 @@ export const constantRoutes = [
         }
       },
       {
+        path: "update",
+        component: () => import("@/views/sheet/update"),
+        name: "SheetUpdate",
+        meta: {
+          title: "修改页面"
+        },
+        hidden: true
+      },
+      {
         path: "links",
         component: () => import("@/views/links"),
         name: "Links",
         meta: {
           title: "友链"
-        }
+        },
+        hidden: true
       }
     ]
   },

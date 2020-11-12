@@ -131,12 +131,7 @@
 </template>
 
 <script>
-import {
-  listSheets,
-  setSheetStatus,
-  fetchPv,
-  deleteSheet,
-} from "@/api/sheet";
+import { listSheets, setSheetStatus, fetchPv, deleteSheet } from "@/api/sheet";
 
 import waves from "@/directive/waves"; // waves directive
 import { parseTime } from "@/utils";
@@ -289,7 +284,7 @@ export default {
       });
     },
     handleUpdate(row) {
-      this.$router.push("/article/update/" + row.articleId);
+      this.$router.push("/sheets/update/");
     },
     handleOpen(row) {
       //判断是否可以访问

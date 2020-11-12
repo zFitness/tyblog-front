@@ -3,17 +3,17 @@
 
     <el-tabs
       type="border-card"
-      v-model="activeTab"
+      v-model="activeKey"
     >
       <el-tab-pane
         label="独立页面"
-        name="first"
+        name="independent"
       >
         <independent />
       </el-tab-pane>
       <el-tab-pane
         label="自定义页面"
-        name="second"
+        name="custom"
       >
         <custom />
       </el-tab-pane>
@@ -34,10 +34,31 @@ export default {
   },
   data() {
     return {
-      activeTab: "first",
+      activeKey: "independent",
     };
   },
-  methods: {},
+  beforeRouteEnter(to, from, next) {
+    // 设置打开哪个card
+    const activeKey = to.query.activeKey;
+    next((vm) => {
+      if (activeKey) {
+        vm.activeKey = activeKey;
+      }
+    });
+  },
+  watch: {
+    activeKey: {
+      handler: function (newVal, oldVal) {
+        if (newVal) {
+          const path = this.$router.history.current.path;
+          this.$router.push({ path, query: { activeKey: newVal } });
+        }
+      },
+    },
+  },
+  methods: {
+  },
+  mounted() {},
 };
 </script>
 

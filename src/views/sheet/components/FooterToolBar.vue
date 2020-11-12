@@ -1,12 +1,12 @@
 <template>
   <div class="footer-toolbar">
     <div class="toolbar">
+      <el-button>预览</el-button>
+      <el-button>附件库</el-button>
       <el-button
         type="primary"
         @click="handlePublish"
       >发布</el-button>
-      <el-button>预览</el-button>
-      <el-button>附件库</el-button>
     </div>
   </div>
 </template>
