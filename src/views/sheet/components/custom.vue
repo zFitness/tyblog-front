@@ -284,7 +284,10 @@ export default {
       });
     },
     handleUpdate(row) {
-      this.$router.push("/sheets/update/");
+      this.$router.push({
+        path: "/sheets/edit/",
+        query: { sheetId: row.sheetId },
+      });
     },
     handleOpen(row) {
       //判断是否可以访问

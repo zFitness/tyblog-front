@@ -2,7 +2,7 @@
   <div class="markdown-container">
 
     <mavon-editor
-      v-model="sheetContent"
+      v-model="sheet.sheetContent"
       :ishljs="true"
     />
 
@@ -10,12 +10,15 @@
     <footer-tool-bar></footer-tool-bar>
 
     <!-- Drawer -->
-    <sheet-setting-drawer :sheetContent="sheetContent"></sheet-setting-drawer>
+    <sheet-setting-drawer
+      :sheet="sheet"
+      :content="sheet.sheetContent"
+    ></sheet-setting-drawer>
   </div>
 </template>
 
 <script>
-import { createSheet } from "@/api/sheet";
+import { createSheet, fetchSheet } from "@/api/sheet";
 import FooterToolBar from "./components/FooterToolBar";
 import SheetSettingDrawer from "./components/SheetSettingDrawer";
 
@@ -24,8 +27,19 @@ export default {
   components: { FooterToolBar, SheetSettingDrawer },
   data() {
     return {
-      sheetContent: "",
+      sheet: {},
     };
+  },
+  beforeRouteEnter(to, from, next) {
+    //得到页面id
+    const sheetId = to.query.sheetId;
+    next((vm) => {
+      if (sheetId) {
+        fetchSheet(sheetId).then((resp) => {
+          vm.sheet = resp.data;
+        });
+      }
+    });
   },
   mounted() {},
   methods: {},

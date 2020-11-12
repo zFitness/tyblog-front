@@ -8,9 +8,9 @@ export function listSheets(query) {
   });
 }
 
-export function fetchArticle(id) {
+export function fetchSheet(sheetId) {
   return request({
-    url: `api/admin/articles/${id}`,
+    url: `api/admin/sheets/id/${sheetId}`,
     method: "get",
     params: {}
   });
@@ -18,7 +18,7 @@ export function fetchArticle(id) {
 
 export function deleteSheet(sheetId) {
   return request({
-    url: `/api/admin/sheets/${sheetId}`,
+    url: `/api/admin/sheets/id/${sheetId}`,
     method: "delete",
     params: {}
   });
@@ -48,10 +48,10 @@ export function createSheet(data) {
   });
 }
 
-export function updateArticle(data) {
+export function updateSheet(sheetId, data) {
   return request({
-    url: "api/admin/articles/update",
-    method: "post",
+    url: `api/admin/sheets/id/${sheetId}`,
+    method: "put",
     data
   });
 }

@@ -9,7 +9,7 @@
       <el-divider></el-divider>
       <div class="drawer-content">
         <el-form
-          :model="sheet"
+          :model="selectedSheet"
           :rules="rules"
           ref="ruleForm"
           label-position="top"
@@ -19,7 +19,7 @@
             prop="sheetTitle"
           >
             <el-input
-              v-model="sheet.sheetTitle"
+              v-model="selectedSheet.sheetTitle"
               autocomplete="off"
             />
           </el-form-item>
@@ -28,7 +28,7 @@
             prop="sheetSlug"
           >
             <el-input
-              v-model="sheet.sheetSlug"
+              v-model="selectedSheet.sheetSlug"
               autocomplete="off"
             >
               <el-tooltip
@@ -48,7 +48,7 @@
           </el-form-item>
           <el-form-item label="状态">
             <el-radio-group
-              v-model="sheet.sheetStatus"
+              v-model="selectedSheet.sheetStatus"
               label="状态"
             >
               <el-radio :label="'publish'">发布</el-radio>
@@ -57,7 +57,7 @@
           </el-form-item>
           <el-form-item label="是否开启评论">
             <el-switch
-              v-model="sheet.commentStatus"
+              v-model="selectedSheet.commentStatus"
               active-color="#13ce66"
               inactive-color="#ff4949"
             >
@@ -65,7 +65,7 @@
           </el-form-item>
           <el-form-item label="发表日期">
             <el-date-picker
-              v-model="sheet.createTime"
+              v-model="selectedSheet.createTime"
               type="datetime"
               placeholder="选择日期时间"
               align="right"
@@ -93,26 +93,28 @@
 <script>
 import { EventBus } from "./event-bus";
 import pinyin from "tiny-pinyin";
-import { createSheet } from "@/api/sheet";
+import { createSheet, updateSheet } from "@/api/sheet";
 export default {
   props: {
-    sheetContent: {
+    sheet: {
+      type: Object,
+    },
+    content: {
       type: String,
-      default: "",
     },
   },
   data() {
     return {
       drawer: false,
       direction: "rtl",
-      sheet: {
-        sheetTitle: "",
+      selectedSheet: {
+        sheetId: null,
+        sheetTitle: this.sheet.sheetTitle,
         sheetSlug: "",
         createTime: null,
-        sheetSummary: "",
-        sheetStatus: "draft",
-        sheetContent: "",
+        sheetStatus: "publish",
         commentStatus: true,
+        sheetContent: "",
       },
       rules: {
         sheetTitle: [
@@ -139,29 +141,37 @@ export default {
   methods: {
     handleSetSlug() {
       if (pinyin.isSupported) {
-        this.sheet.sheetSlug = pinyin.convertToPinyin(
-          this.sheet.sheetTitle,
+        this.selectedSheet.sheetSlug = pinyin.convertToPinyin(
+          this.selectedSheet.sheetTitle,
           "-",
           true
         );
       } else {
-        this.sheet.sheetSlug = "";
+        this.selectedSheet.sheetSlug = "";
       }
     },
     handlerCreateSheet() {
-      this.sheet.sheetContent = this.sheetContent;
       this.$refs["ruleForm"].validate((valid) => {
         if (valid) {
-          createSheet(this.sheet).then((resp) => {
-            console.log(resp);
+          this.createOrUpdateSheet();
+        } else {
+          return false;
+        }
+      });
+    },
+    createOrUpdateSheet() {
+      this.selectedSheet.sheetContent = this.content;
+      if (this.selectedSheet.sheetId != null) {
+        updateSheet(this.selectedSheet.sheetId, this.selectedSheet).then(
+          (resp) => {
             if (resp.code == 200) {
               this.$notify({
                 title: "提示",
-                message: "发布成功",
+                message: "更新成功",
               });
               this.drawer = false;
               setTimeout(() => {
-                this.$router.push("/sheets/list");
+                this.$router.push("/sheets/list?activeKey=custom");
                 this.$store.dispatch("tagsView/delView", this.$route);
               }, 150);
             } else {
@@ -170,11 +180,28 @@ export default {
                 message: resp.message,
               });
             }
-          });
-        } else {
-          return false;
-        }
-      });
+          }
+        );
+      } else {
+        createSheet(this.selectedSheet).then((resp) => {
+          if (resp.code == 200) {
+            this.$notify({
+              title: "提示",
+              message: "发布成功",
+            });
+            this.drawer = false;
+            setTimeout(() => {
+              this.$router.push("/sheets/list");
+              this.$store.dispatch("tagsView/delView", this.$route);
+            }, 150);
+          } else {
+            this.$notify({
+              title: "提示",
+              message: resp.message,
+            });
+          }
+        });
+      }
     },
   },
   mounted() {
@@ -209,7 +236,16 @@ export default {
       }
       return fmt;
     };
-    this.sheet.createTime = new Date().format("yyyy-MM-dd hh:mm:ss");
+    this.selectedSheet.createTime = new Date().format("yyyy-MM-dd hh:mm:ss");
+  },
+  watch: {
+    sheet(val) {
+      this.selectedSheet.sheetId = this.sheet.sheetId;
+      this.selectedSheet.sheetSlug = this.sheet.sheetSlug;
+      this.selectedSheet.sheetTitle = this.sheet.sheetTitle;
+      this.selectedSheet.sheetContent = this.sheet.sheetContent;
+      this.selectedSheet.commentStatus = this.sheet.commentStatus;
+    },
   },
 };
 </script>
