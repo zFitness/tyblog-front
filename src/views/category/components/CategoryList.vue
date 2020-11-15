@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { fetchSorts, deleteSort } from "@/api/sort";
+import { fetchSortsWithArticleCount, deleteSort } from "@/api/sort";
 import Pagination from "@/components/Pagination";
 import { EventBus } from "./event-bus";
 
@@ -95,7 +95,7 @@ export default {
       console.log(row);
     },
     listSorts() {
-      fetchSorts().then((resp) => {
+      fetchSortsWithArticleCount().then((resp) => {
         this.tableData = resp.data;
       });
     },

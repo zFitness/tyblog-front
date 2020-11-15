@@ -104,7 +104,7 @@
 
 <script>
 import { EventBus } from "./event-bus";
-import pinyin from "tiny-pinyin";
+import { getSlug } from "@/utils/slug";
 import TagSelect from "./TagSelect";
 import { fetchSorts } from "@/api/sort";
 import { createArticle, updateArticle } from "@/api/article";
@@ -170,15 +170,7 @@ export default {
       });
     },
     handleSetSlug() {
-      if (pinyin.isSupported) {
-        this.article.articleSlug = pinyin.convertToPinyin(
-          this.article.articleTitle,
-          "-",
-          true
-        );
-      } else {
-        this.article.articleSlug = "";
-      }
+      this.article.articleSlug = getSlug(this.article.articleTitle);
     },
     handlerCreateArticle() {
       this.$refs["ruleForm"].validate((valid) => {

@@ -8,26 +8,34 @@ export function fetchSorts() {
   });
 }
 
+export function fetchSortsWithArticleCount() {
+  return request({
+    url: "api/admin/sorts?more=true",
+    method: "get",
+    params: {}
+  });
+}
+
 export function deleteSort(sortId) {
   return request({
-    url: "api/admin/sorts/delete",
-    method: "post",
-    params: { sortId }
+    url: `api/admin/sorts/${sortId}`,
+    method: "delete",
+    params: {}
   });
 }
 
 export function addSort(data) {
   return request({
-    url: "api/admin/sorts/add",
+    url: "api/admin/sorts",
     method: "post",
     data: data
   });
 }
 
-export function updateSort(data) {
+export function updateSort(sortId, data) {
   return request({
-    url: "api/admin/sorts/update",
-    method: "post",
+    url: `api/admin/sorts/${sortId}`,
+    method: "put",
     data: data
   });
 }

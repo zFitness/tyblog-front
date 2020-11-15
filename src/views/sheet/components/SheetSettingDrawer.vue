@@ -92,7 +92,7 @@
 
 <script>
 import { EventBus } from "./event-bus";
-import pinyin from "tiny-pinyin";
+import { getSlug } from "@/utils/slug";
 import { createSheet, updateSheet } from "@/api/sheet";
 export default {
   props: {
@@ -140,15 +140,7 @@ export default {
   },
   methods: {
     handleSetSlug() {
-      if (pinyin.isSupported) {
-        this.selectedSheet.sheetSlug = pinyin.convertToPinyin(
-          this.selectedSheet.sheetTitle,
-          "-",
-          true
-        );
-      } else {
-        this.selectedSheet.sheetSlug = "";
-      }
+      this.selectedSheet.sheetSlug = getSlug(this.selectedSheet.sheetTitle);
     },
     handlerCreateSheet() {
       this.$refs["ruleForm"].validate((valid) => {

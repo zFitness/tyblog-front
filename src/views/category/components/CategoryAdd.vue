@@ -21,10 +21,26 @@
           <el-input v-model="ruleForm.sortName"></el-input>
         </el-form-item>
         <el-form-item
-          label="别名"
+          label="文章别名"
           prop="sortAlias"
         >
-          <el-input v-model="ruleForm.sortAlias"></el-input>
+          <el-input
+            v-model="ruleForm.sortAlias"
+            autocomplete="off"
+          >
+            <el-tooltip
+              slot="append"
+              class="item"
+              effect="dark"
+              content="自动生成"
+              placement="bottom-start"
+            >
+              <el-button
+                icon="el-icon-search"
+                @click="handleSetSlug"
+              ></el-button>
+            </el-tooltip>
+          </el-input>
         </el-form-item>
         <el-form-item
           label="上级目录"
@@ -82,6 +98,7 @@
 <script>
 import { addSort, fetchSorts, updateSort } from "@/api/sort";
 import { EventBus } from "./event-bus";
+import { getSlug } from "@/utils/slug";
 
 export default {
   data() {
@@ -103,12 +120,15 @@ export default {
       rules: {
         sortName: [
           { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 1, max: 10, message: "长度在 1 到 5 个字符", trigger: "blur" },
+          { min: 1, max: 10, message: "长度在 1 到 10 个字符", trigger: "blur" },
         ],
       },
     };
   },
   methods: {
+    handleSetSlug() {
+      this.ruleForm.sortAlias = getSlug(this.ruleForm.sortName);
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -131,7 +151,7 @@ export default {
               }
             });
           } else {
-            updateSort(this.ruleForm).then((resp) => {
+            updateSort(this.ruleForm.sortId, this.ruleForm).then((resp) => {
               if (resp.code == 200) {
                 this.$notify({
                   title: "成功",
