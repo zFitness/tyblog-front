@@ -8,26 +8,34 @@ export function fetchLabels() {
   });
 }
 
-export function createLabel(labelName) {
+export function fetchLabelsWithArticleCount() {
   return request({
-    url: "api/admin/labels/addByName",
-    method: "post",
-    params: { labelName }
+    url: "api/admin/labels?more=true",
+    method: "get",
+    params: {}
   });
 }
 
-export function updateLabel(data) {
+export function createLabel(data) {
   return request({
-    url: "api/admin/labels/update",
+    url: "api/admin/labels",
     method: "post",
+    data: data
+  });
+}
+
+export function updateLabel(labelId, data) {
+  return request({
+    url: `api/admin/labels/${labelId}`,
+    method: "put",
     data: data
   });
 }
 
 export function deleteLabel(labelId) {
   return request({
-    url: "api/admin/labels/delete",
-    method: "post",
-    params: { labelId }
+    url: `api/admin/labels/${labelId}`,
+    method: "delete",
+    params: {}
   });
 }

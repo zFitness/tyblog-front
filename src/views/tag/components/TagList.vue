@@ -30,14 +30,10 @@
 </template>
 
 <script>
-import { fetchLabels } from "@/api/label";
-import Pagination from "@/components/Pagination";
+import { fetchLabelsWithArticleCount } from "@/api/label";
 import { EventBus } from "./event-bus";
 
 export default {
-  components: {
-    Pagination,
-  },
   mounted() {
     this.listLabels();
   },
@@ -46,29 +42,9 @@ export default {
       EventBus.$emit("edit", row);
     },
     listLabels() {
-      fetchLabels().then((resp) => {
+      fetchLabelsWithArticleCount().then((resp) => {
         this.tableData = resp.data;
       });
-    },
-    handleCommand(command) {
-      console.log(command);
-      switch (command["tag"]) {
-        case "b":
-          deleteSort(command["sortId"]).then((resp) => {
-            if (resp.code == 20000) {
-              this.tableData.splice(command["index"], 1);
-              this.total--;
-              this.$notify({
-                title: "成功",
-                message: "删除成功",
-                type: "success",
-              });
-              //如果在删除之前点击了更新按钮需要把更新组件清空
-              EventBus.$emit("delete");
-            }
-          });
-          break;
-      }
     },
   },
 

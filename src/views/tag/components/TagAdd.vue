@@ -20,6 +20,21 @@
         >
           <el-input v-model="ruleForm.labelName"></el-input>
         </el-form-item>
+        <el-form-item
+          label="别名"
+          prop="labelSlug"
+        >
+          <el-input v-model="ruleForm.labelSlug"></el-input>
+        </el-form-item>
+        <el-form-item
+          label="描述"
+          prop="labelDescription"
+        >
+          <el-input
+            type="textarea"
+            v-model="ruleForm.labelDescription"
+          ></el-input>
+        </el-form-item>
         <el-form-item>
           <el-button
             v-show="!isAdd"
@@ -58,20 +73,34 @@ export default {
   data() {
     return {
       isAdd: true,
-      sorts: [],
       ruleForm: {
         labelName: "",
+        labelSlug: "",
+        labelDescription: "",
       },
       ruleFormCopy: {
-        parentSortId: 0,
-        sortAlias: "",
-        sortDescription: "",
-        sortName: "",
+        labelName: "",
+        labelSlug: "",
+        labelDescription: "",
       },
       rules: {
         labelName: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 1, max: 10, message: "长度在 1 到 5 个字符", trigger: "blur" },
+          { required: true, message: "请输入标签名称", trigger: "blur" },
+          {
+            min: 1,
+            max: 10,
+            message: "长度在 1 到 10 个字符",
+            trigger: "blur",
+          },
+        ],
+        labelSlug: [
+          { required: true, message: "请输入别名", trigger: "blur" },
+          {
+            min: 1,
+            max: 40,
+            message: "长度在 1 到 40 个字符",
+            trigger: "blur",
+          },
         ],
       },
     };
@@ -100,7 +129,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.isAdd) {
-            createLabel(this.ruleForm.labelName).then((resp) => {
+            createLabel(this.ruleForm).then((resp) => {
               if (resp.code == 200) {
                 this.$notify({
                   title: "成功",
@@ -118,7 +147,7 @@ export default {
               }
             });
           } else {
-            updateLabel(this.ruleForm).then((resp) => {
+            updateLabel(this.ruleForm.labelId, this.ruleForm).then((resp) => {
               if (resp.code == 200) {
                 this.$notify({
                   title: "成功",
