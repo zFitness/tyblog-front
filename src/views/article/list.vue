@@ -314,13 +314,15 @@ export default {
       });
     },
     handleUpdate(row) {
-      this.$router.push("/article/update/" + row.articleId);
+      this.$router.push("/article/update/?articleId=" + row.articleId);
     },
     handleOpen(row) {
       //判断是否可以访问
       if (row.articleStatus == "publish") {
-        window.open("http://localhost:8080/article/" + row.articleId, "_blank")
-          .location;
+        window.open(
+          "http://localhost:8080/article/" + row.articleSlug,
+          "_blank"
+        ).location;
       }
     },
     updateData() {

@@ -23,11 +23,13 @@ import FooterToolBar from "./components/FooterToolBar";
 import SheetSettingDrawer from "./components/SheetSettingDrawer";
 
 export default {
-  name: "SheetAdd",
+  name: "SheetUpdate",
   components: { FooterToolBar, SheetSettingDrawer },
   data() {
     return {
-      sheet: {},
+      sheet: {
+        sheetContent: "",
+      },
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -41,8 +43,6 @@ export default {
       }
     });
   },
-  mounted() {},
-  methods: {},
 };
 </script>
 

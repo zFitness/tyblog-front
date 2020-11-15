@@ -80,8 +80,18 @@ export const constantRoutes = [
         component: () => import("@/views/article/add"),
         name: "ArticleAdd",
         meta: {
-          title: "写文章"
+          title: "添加文章"
         }
+      },
+      {
+        path: "update",
+        component: () => import("@/views/article/update"),
+        name: "ArticleUpdate",
+        meta: {
+          title: "修改文章",
+          noCache: true
+        },
+        hidden: true
       },
       {
         path: "category",
@@ -132,7 +142,7 @@ export const constantRoutes = [
       },
       {
         path: "add",
-        component: () => import("@/views/sheet/SheetEdit"),
+        component: () => import("@/views/sheet/SheetAdd"),
         name: "SheetAdd",
         meta: {
           title: "添加页面"
@@ -140,7 +150,7 @@ export const constantRoutes = [
       },
       {
         path: "edit",
-        component: () => import("@/views/sheet/SheetEdit"),
+        component: () => import("@/views/sheet/SheetUpdate"),
         name: "SheetUpdate",
         meta: {
           title: "修改页面"

@@ -19,6 +19,11 @@ export default {
   outline: 0 !important;
 }
 
+.el-drawer__body {
+  height: 100%;
+  overflow-y: auto;
+}
+
 /** 抽屉宽度 */
 @media screen and (max-width: 768px) {
   .el-drawer {
@@ -30,6 +35,7 @@ export default {
   margin: 16px 0;
 }
 .el-drawer__header {
-  padding-top: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e8e8e8;
 }
 </style>
